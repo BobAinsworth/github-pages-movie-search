@@ -505,9 +505,9 @@
                 ? "from newest to oldest"
                 : "from oldest to newest";
 
-        return `SOURCE RESTRICTION — IMDB ONLY: Use IMDB.com as your only source. Open, read, and cite only pages on the imdb.com domain. Do not search, open, cite, or use information from Google results, Wikipedia, JustWatch, Rotten Tomatoes, streaming-service websites, or any other website. Do not broaden the research beyond IMDB.
+        return `I would like you to investigate the IMDB website to identify ${subject} rated ${rating} or higher, ${dateText}${genreText}. Show titles ${watchText} on ${joinNatural([...state.services])}.${specificText}
 
-I would like you to investigate the IMDB website to identify ${subject} rated ${rating} or higher, ${dateText}${genreText}. Show titles ${watchText} on ${joinNatural([...state.services])}.${specificText}
+SOURCE RESTRICTION — IMDB ONLY: Use IMDB.com as your only source. Open, read, and cite only pages on the imdb.com domain. Do not search, open, cite, or use information from Google results, Wikipedia, JustWatch, Rotten Tomatoes, streaming-service websites, or any other website. Do not broaden the research beyond IMDB.
 
 Every title, release year, length or episode count, streaming service, rating, and link must be verified on an IMDB page. If a required fact or current streaming availability cannot be verified on IMDB, omit that title rather than checking another source.
 
@@ -522,17 +522,11 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
         const start = byId("yearStart");
         const end = byId("yearEnd");
 
-        if (
-          changed === start &&
-          Number(start.value) >= Number(end.value)
-        ) {
+        if (changed === start && Number(start.value) >= Number(end.value)) {
           start.value = String(Number(end.value) - 1);
         }
 
-        if (
-          changed === end &&
-          Number(end.value) <= Number(start.value)
-        ) {
+        if (changed === end && Number(end.value) <= Number(start.value)) {
           end.value = String(Number(start.value) + 1);
         }
 
