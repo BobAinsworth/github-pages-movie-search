@@ -7,158 +7,939 @@
   <title>Movie Streaming Search</title>
 
   <style>
-    :root{--bg:#05080d;--panel:#0c1520;--line:#344353;--gold:#f2b821;--gold-2:#ffcf52;--text:#f7f8fb;--muted:#b4bdc9}
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth;background:var(--bg)}
-    body{margin:0;background:radial-gradient(circle at 78% 22%,#102136 0,transparent 34rem),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    button,select,input{font:inherit}
-    button,a,select,input{-webkit-tap-highlight-color:transparent}
-    button{color:inherit}
-    a{color:inherit;text-decoration:none}
-    [hidden]{display:none!important}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
-    .site-header{height:82px;padding:0 2.1vw;display:flex;align-items:center;position:sticky;top:0;z-index:60;background:rgba(3,8,14,.94);border-bottom:1px solid #293746;backdrop-filter:blur(18px)}
-    .brand{display:inline-flex;align-items:center;gap:13px;font-family:Georgia,"Times New Roman",serif;font-size:31px;font-weight:700;letter-spacing:-.035em;color:#f2c450}
-    .brand>span:last-child>span{color:#f0bd32}
-    .brand-mark{width:41px;height:41px;border:3px solid #efb82a;border-radius:50%;position:relative;display:block;box-shadow:0 0 24px rgba(245,197,24,.12)}
-    .brand-mark::after{content:"";width:15px;height:4px;background:#efb82a;position:absolute;bottom:-7px;right:-10px;rotate:48deg;border-radius:4px}
-    .film-dot{position:absolute;width:8px;height:8px;background:#efb82a;border-radius:50%}
-    .dot-one{left:6px;top:6px}
-    .dot-two{right:6px;top:6px}
-    .dot-three{left:6px;bottom:6px}
-    .dot-four{right:6px;bottom:6px}
-    .film-center{position:absolute;width:8px;height:8px;border:2px solid #efb82a;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-    .site-header nav{display:flex;align-items:center;gap:48px;margin-left:92px}
-    .site-header nav a{font-size:16px;color:#f0f2f5}
-    .builder-pill{margin-left:auto;border:1px solid var(--gold);border-radius:999px;padding:10px 18px;color:var(--gold-2);font-size:15px}
-    .builder-pill span{margin-right:9px}
-    .menu-button,.mobile-menu{display:none}
-
-    .hero{min-height:220px;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;isolation:isolate;background:#07101a url("images/reelscout.jpg") center 47%/cover no-repeat;border-bottom:1px solid #2b3948}
-    .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,8,13,.82),rgba(5,12,20,.35) 48%,rgba(4,8,13,.78)),linear-gradient(0deg,rgba(4,9,15,.63),rgba(4,9,15,.18))}
-    .hero-content{padding:36px 20px}
-    .hero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(34px,3.5vw,54px);line-height:1.06;letter-spacing:-.025em;margin:0 0 13px;text-shadow:0 4px 16px rgba(0,0,0,.6)}
-    .hero p{font-size:17px;color:#eef1f5;margin:0;text-shadow:0 2px 8px #000}
-
-    .builder-shell{display:grid;grid-template-columns:minmax(340px,31%) minmax(0,1fr);gap:18px;max-width:1540px;margin:0 auto;padding:0 30px 38px}
-    .filter-panel,.prompt-panel{border:1px solid var(--line);background:linear-gradient(145deg,rgba(12,23,35,.98),rgba(6,13,22,.99));box-shadow:0 24px 70px rgba(0,0,0,.26)}
-    .filter-panel{padding:15px 20px 21px;border-radius:13px}
-    .step-banner,.step-action,.step-instruction{background:linear-gradient(110deg,#f7bd2d,#efa817 72%,#ffcb46);color:#111;border:1px solid #f1b729;border-radius:8px;box-shadow:inset 0 1px rgba(255,255,255,.25),0 10px 28px rgba(0,0,0,.16)}
-    .step-banner{min-height:45px;padding:8px 14px;display:flex;align-items:center;font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:700;margin-bottom:12px}
-    .step-banner span{margin:0 8px}
-    .filter-group{border:0;padding:0;margin:0 0 12px;min-width:0}
-    .filter-group legend,.field-label,.range-title{font-size:13px;font-weight:650;color:#f1f3f6}
-
-    .segmented-control{display:grid;grid-template-columns:repeat(3,1fr);margin-top:8px}
-    .segmented-control button{display:flex;align-items:center;justify-content:center;gap:7px;background:#09111b;border:1px solid #425060;min-height:36px;font-size:12px;cursor:pointer}
-    .segmented-control button:first-child{border-radius:7px 0 0 7px}
-    .segmented-control button:last-child{border-radius:0 7px 7px 0}
-    .segmented-control button+button{border-left:0}
-    .segmented-control button.active{color:#101216;background:linear-gradient(135deg,#f7c13d,#e8a817);border-color:#f2b925;font-weight:750}
-
-    .service-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
-    .service-chips button{display:flex;align-items:center;gap:7px;border:1px solid #3a4858;background:#08111b;border-radius:7px;padding:7px 10px;font-size:11px;color:#f1f3f6;cursor:pointer}
-    .service-chips button.selected{color:#101216;background:linear-gradient(135deg,#f7c13d,#e8a817);border-color:#f2b925;font-weight:750;box-shadow:inset 0 1px rgba(255,255,255,.25),0 7px 18px rgba(0,0,0,.16)}
-    .service-mark{font-weight:800}
-    .service-netflix{color:#e50914;font-size:16px}
-    .service-primevideo{color:#1473a0}
-    .service-max{color:#176ad9}
-    .service-disney{color:#365b91}
-    .service-hulu{color:#087938;font-size:16px}
-    .more-services{padding:9px;background:#07101a;border-radius:8px;max-height:125px;overflow:auto}
-
-    .field-label{display:grid;gap:6px;margin:0 0 10px}
-    select,.specific-search input{width:100%;height:34px;background:#09121c;color:#f1f3f6;border:1px solid #3b4958;border-radius:7px;padding:0 10px;outline:none;font-size:12px}
-    select:focus,input:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-
-    .range-group{margin:3px 0 11px}
-    .range-title{display:flex;justify-content:space-between;align-items:center}
-    .range-title output{font-size:12px;font-weight:500}
-    .dual-range{position:relative;height:27px;margin-top:3px}
-    .dual-range-track{position:absolute;left:2px;right:2px;top:11px;height:4px;border-radius:99px;background:#47515b}
-    .dual-range-track span{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--gold)}
-    .dual-range input[type=range]{appearance:none;-webkit-appearance:none;position:absolute;inset:0;width:100%;height:27px;margin:0;background:transparent;pointer-events:none}
-    .dual-range input[type=range]::-webkit-slider-runnable-track{height:4px;background:transparent}
-    .dual-range input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border:1px solid white;border-radius:50%;background:#d99b19;box-shadow:0 0 0 2px #14202c;pointer-events:auto;cursor:grab}
-    .dual-range input[type=range]::-moz-range-track{height:4px;background:transparent}
-    .dual-range input[type=range]::-moz-range-thumb{width:18px;height:18px;border:1px solid white;border-radius:50%;background:#d99b19;box-shadow:0 0 0 2px #14202c;pointer-events:auto;cursor:grab}
-    .range-ends{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:-3px}
-    .rating-range input[type=range]{width:100%;height:17px;accent-color:var(--gold);margin:3px 0 0}
-    .specific-search{display:grid;gap:7px}
-    .specific-search .field-label{margin-bottom:0}
-
-    .prompt-panel{min-width:0;border-radius:13px;padding:34px 32px 20px;display:flex;flex-direction:column}
-    .prompt-eyebrow{display:block;color:var(--gold);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px}
-    .prompt-panel h2{font-family:Georgia,"Times New Roman",serif;font-size:29px;margin:0 0 24px}
-    .prompt-box{flex:1;min-height:350px;border:1px solid #455364;border-radius:10px;padding:25px 30px;background:linear-gradient(145deg,rgba(10,21,33,.92),rgba(7,15,24,.9));font-size:clamp(19px,1.75vw,28px);line-height:1.48;white-space:pre-line}
-    .steps-grid{display:grid;grid-template-columns:1fr 1.08fr;gap:24px;margin-top:28px}
-    .step-action,.step-instruction{min-height:138px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(17px,1.45vw,25px);line-height:1.32}
-    .step-action{cursor:pointer;font-weight:540}
-    .step-action:hover{filter:brightness(1.06);transform:translateY(-2px)}
-    .step-action b,.step-instruction b{font-weight:400}
-    .copy-icon{width:39px;height:38px;position:relative;margin-right:18px;flex:0 0 auto}
-    .copy-icon i{position:absolute;width:25px;height:28px;border:2px solid #19140a;border-radius:4px}
-    .copy-icon i:first-child{left:0;top:0}
-    .copy-icon i:last-child{right:0;bottom:0;background:rgba(255,255,255,.05)}
-    .copy-status{min-height:29px;text-align:center;color:var(--muted);font-size:12px;padding-top:12px}
-    .copy-status.copied{color:#ffdc75}
-    .copy-status.error{color:#ff9c8e}
-
-    @media(max-width:1080px){
-      .site-header nav{margin-left:50px;gap:30px}
-      .builder-shell{grid-template-columns:330px minmax(0,1fr);padding-inline:18px}
-      .prompt-panel{padding-inline:22px}
-      .prompt-box{padding:22px;font-size:19px}
-      .steps-grid{gap:14px}
-      .step-action,.step-instruction{font-size:17px}
+    :root {
+      --bg: #05080d;
+      --panel: #0c1520;
+      --line: #344353;
+      --gold: #f2b821;
+      --gold-2: #ffcf52;
+      --text: #f7f8fb;
+      --muted: #b4bdc9;
     }
 
-    @media(max-width:760px){
-      .site-header{height:70px;padding:0 20px}
-      .brand{font-size:27px}
-      .brand-mark{width:37px;height:37px}
-      .site-header nav,.builder-pill{display:none}
-      .menu-button{display:grid;gap:5px;margin-left:auto;border:0;background:transparent;padding:10px 3px;cursor:pointer}
-      .menu-button span{width:30px;height:3px;background:#f4f5f7;border-radius:3px}
-      .mobile-menu{display:grid;position:absolute;right:16px;top:63px;min-width:190px;background:#101925;border:1px solid #3a4858;border-radius:10px;padding:8px;box-shadow:0 20px 60px #000}
-      .mobile-menu a{padding:12px;border-radius:6px}
-      .hero{min-height:286px;background-position:center}
-      .hero-content{padding:36px 24px}
-      .hero h1{font-size:clamp(34px,10vw,46px);line-height:1.12}
-      .hero p{font-size:17px;line-height:1.45}
-      .builder-shell{display:block;padding:14px 16px 30px}
-      .filter-panel,.prompt-panel{border-radius:12px}
-      .filter-panel{padding:17px 17px 19px}
-      .step-banner{min-height:50px;font-size:22px}
-      .filter-group legend,.field-label,.range-title{font-size:15px}
-      .segmented-control button{min-height:45px;font-size:14px}
-      .service-chips button{min-height:42px;font-size:13px;padding:8px 12px}
-      select,.specific-search input{height:45px;font-size:14px}
-      .dual-range{height:35px}
-      .dual-range-track{top:16px}
-      .dual-range input[type=range]{height:35px}
-      .rating-range input[type=range]{height:24px}
-      .prompt-panel{margin-top:14px;padding:22px 18px 14px}
-      .prompt-panel h2{font-size:26px;margin-bottom:15px}
-      .prompt-box{min-height:0;padding:20px 18px;font-size:17px;line-height:1.5}
-      .steps-grid{grid-template-columns:1fr;gap:10px;margin-top:16px}
-      .step-action,.step-instruction{min-height:86px;font-size:18px}
-      .desktop-break{display:none}
-      .copy-status{font-size:11px}
+    * {
+      box-sizing: border-box;
     }
 
-    @media(max-width:430px){
-      .brand{font-size:25px}
-      .hero{min-height:300px}
-      .hero h1{font-size:36px}
-      .hero p{font-size:16px}
-      .segmented-control button{font-size:12px;gap:4px}
-      .service-chips{display:grid;grid-template-columns:1fr 1fr}
-      .service-chips button{justify-content:flex-start}
-      .prompt-box{font-size:16px}
-      .step-action,.step-instruction{font-size:17px}
-      .copy-icon{margin-right:12px}
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 22%, #102136 0, transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    select,
+    input {
+      font: inherit;
+    }
+
+    button,
+    a,
+    select,
+    input {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .site-header {
+      height: 82px;
+      padding: 0 2.1vw;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: rgba(3, 8, 14, 0.94);
+      border-bottom: 1px solid #293746;
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 31px;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      color: #f2c450;
+    }
+
+    .brand > span:last-child > span {
+      color: #f0bd32;
+    }
+
+    .brand-mark {
+      width: 41px;
+      height: 41px;
+      border: 3px solid #efb82a;
+      border-radius: 50%;
+      position: relative;
+      display: block;
+      box-shadow: 0 0 24px rgba(245, 197, 24, 0.12);
+    }
+
+    .brand-mark::after {
+      content: "";
+      width: 15px;
+      height: 4px;
+      background: #efb82a;
+      position: absolute;
+      bottom: -7px;
+      right: -10px;
+      rotate: 48deg;
+      border-radius: 4px;
+    }
+
+    .film-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #efb82a;
+      border-radius: 50%;
+    }
+
+    .dot-one {
+      left: 6px;
+      top: 6px;
+    }
+
+    .dot-two {
+      right: 6px;
+      top: 6px;
+    }
+
+    .dot-three {
+      left: 6px;
+      bottom: 6px;
+    }
+
+    .dot-four {
+      right: 6px;
+      bottom: 6px;
+    }
+
+    .film-center {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 2px solid #efb82a;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .site-header nav {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      margin-left: 92px;
+    }
+
+    .site-header nav a {
+      font-size: 16px;
+      color: #f0f2f5;
+    }
+
+    .builder-pill {
+      margin-left: auto;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      padding: 10px 18px;
+      color: var(--gold-2);
+      font-size: 15px;
+    }
+
+    .builder-pill span {
+      margin-right: 9px;
+    }
+
+    .menu-button,
+    .mobile-menu {
+      display: none;
+    }
+
+    .hero {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        #07101a url("images/reelscout.jpg") center 47% / cover no-repeat;
+      border-bottom: 1px solid #2b3948;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(4, 8, 13, 0.82),
+          rgba(5, 12, 20, 0.35) 48%,
+          rgba(4, 8, 13, 0.78)
+        ),
+        linear-gradient(
+          0deg,
+          rgba(4, 9, 15, 0.63),
+          rgba(4, 9, 15, 0.18)
+        );
+    }
+
+    .hero-content {
+      padding: 36px 20px;
+    }
+
+    .hero h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 3.5vw, 54px);
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      margin: 0 0 13px;
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: #eef1f5;
+      margin: 0;
+      text-shadow: 0 2px 8px #000;
+    }
+
+    .builder-shell {
+      display: grid;
+      grid-template-columns: minmax(340px, 31%) minmax(0, 1fr);
+      gap: 18px;
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 0 30px 38px;
+    }
+
+    .filter-panel,
+    .prompt-panel {
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(12, 23, 35, 0.98),
+          rgba(6, 13, 22, 0.99)
+        );
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+    }
+
+    .filter-panel {
+      padding: 15px 20px 21px;
+      border-radius: 13px;
+    }
+
+    .step-banner,
+    .step-action,
+    .step-instruction {
+      background:
+        linear-gradient(110deg, #f7bd2d, #efa817 72%, #ffcb46);
+      color: #111;
+      border: 1px solid #f1b729;
+      border-radius: 8px;
+      box-shadow:
+        inset 0 1px rgba(255, 255, 255, 0.25),
+        0 10px 28px rgba(0, 0, 0, 0.16);
+    }
+
+    .step-banner {
+      min-height: 45px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .step-banner span {
+      margin: 0 8px;
+    }
+
+    .filter-group {
+      border: 0;
+      padding: 0;
+      margin: 0 0 12px;
+      min-width: 0;
+    }
+
+    .filter-group legend,
+    .field-label,
+    .range-title {
+      font-size: 13px;
+      font-weight: 650;
+      color: #f1f3f6;
+    }
+
+    .segmented-control {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 8px;
+    }
+
+    .segmented-control button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: #09111b;
+      border: 1px solid #425060;
+      min-height: 36px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .segmented-control button:first-child {
+      border-radius: 7px 0 0 7px;
+    }
+
+    .segmented-control button:last-child {
+      border-radius: 0 7px 7px 0;
+    }
+
+    .segmented-control button + button {
+      border-left: 0;
+    }
+
+    .segmented-control button.active {
+      color: #101216;
+      background: linear-gradient(135deg, #f7c13d, #e8a817);
+      border-color: #f2b925;
+      font-weight: 750;
+    }
+
+    .service-chips {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .service-chips button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid #3a4858;
+      background: #08111b;
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 11px;
+      color: #f1f3f6;
+      cursor: pointer;
+    }
+
+    .service-chips button.selected {
+      color: #101216;
+      background: linear-gradient(135deg, #f7c13d, #e8a817);
+      border-color: #f2b925;
+      font-weight: 750;
+      box-shadow:
+        inset 0 1px rgba(255, 255, 255, 0.25),
+        0 7px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    .service-mark {
+      font-weight: 800;
+    }
+
+    .service-netflix {
+      color: #e50914;
+      font-size: 16px;
+    }
+
+    .service-primevideo {
+      color: #167cae;
+    }
+
+    .service-max {
+      color: #1857b7;
+    }
+
+    .service-disney {
+      color: #26385e;
+    }
+
+    .service-hulu {
+      color: #087a3d;
+      font-size: 16px;
+    }
+
+    .more-services {
+      padding: 9px;
+      background: #07101a;
+      border-radius: 8px;
+      max-height: 125px;
+      overflow: auto;
+    }
+
+    .field-label {
+      display: grid;
+      gap: 6px;
+      margin: 0 0 10px;
+    }
+
+    select,
+    .specific-search input {
+      width: 100%;
+      height: 34px;
+      background: #09121c;
+      color: #f1f3f6;
+      border: 1px solid #3b4958;
+      border-radius: 7px;
+      padding: 0 10px;
+      outline: none;
+      font-size: 12px;
+    }
+
+    select:focus,
+    input:focus,
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .range-group {
+      margin: 3px 0 11px;
+    }
+
+    .range-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .range-title output {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .dual-range {
+      position: relative;
+      height: 27px;
+      margin-top: 3px;
+    }
+
+    .dual-range-track {
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      top: 11px;
+      height: 4px;
+      border-radius: 99px;
+      background: #47515b;
+    }
+
+    .dual-range-track span {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 99px;
+      background: var(--gold);
+    }
+
+    .dual-range input[type="range"] {
+      appearance: none;
+      -webkit-appearance: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 27px;
+      margin: 0;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .dual-range input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: transparent;
+    }
+
+    .dual-range input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      margin-top: -7px;
+      border: 1px solid white;
+      border-radius: 50%;
+      background: #d99b19;
+      box-shadow: 0 0 0 2px #14202c;
+      pointer-events: auto;
+      cursor: grab;
+    }
+
+    .dual-range input[type="range"]::-moz-range-track {
+      height: 4px;
+      background: transparent;
+    }
+
+    .dual-range input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border: 1px solid white;
+      border-radius: 50%;
+      background: #d99b19;
+      box-shadow: 0 0 0 2px #14202c;
+      pointer-events: auto;
+      cursor: grab;
+    }
+
+    .range-ends {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: -3px;
+    }
+
+    .rating-range input[type="range"] {
+      width: 100%;
+      height: 17px;
+      accent-color: var(--gold);
+      margin: 3px 0 0;
+    }
+
+    .specific-search {
+      display: grid;
+      gap: 7px;
+    }
+
+    .specific-search .field-label {
+      margin-bottom: 0;
+    }
+
+    .prompt-panel {
+      min-width: 0;
+      border-radius: 13px;
+      padding: 34px 32px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .prompt-eyebrow {
+      display: block;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 9px;
+    }
+
+    .prompt-panel h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 29px;
+      margin: 0 0 24px;
+    }
+
+    .prompt-box {
+      flex: 1;
+      min-height: 350px;
+      border: 1px solid #455364;
+      border-radius: 10px;
+      padding: 25px 30px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(10, 21, 33, 0.92),
+          rgba(7, 15, 24, 0.9)
+        );
+      font-size: clamp(19px, 1.75vw, 28px);
+      line-height: 1.48;
+      white-space: pre-line;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.08fr;
+      gap: 24px;
+      margin-top: 28px;
+    }
+
+    .step-action,
+    .step-instruction {
+      min-height: 138px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: clamp(17px, 1.45vw, 25px);
+      line-height: 1.32;
+    }
+
+    .step-action {
+      cursor: pointer;
+      font-weight: 540;
+    }
+
+    .step-action:hover {
+      filter: brightness(1.06);
+      transform: translateY(-2px);
+    }
+
+    .step-action b,
+    .step-instruction b {
+      font-weight: 400;
+    }
+
+    .copy-icon {
+      width: 39px;
+      height: 38px;
+      position: relative;
+      margin-right: 18px;
+      flex: 0 0 auto;
+    }
+
+    .copy-icon i {
+      position: absolute;
+      width: 25px;
+      height: 28px;
+      border: 2px solid #19140a;
+      border-radius: 4px;
+    }
+
+    .copy-icon i:first-child {
+      left: 0;
+      top: 0;
+    }
+
+    .copy-icon i:last-child {
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .copy-status {
+      min-height: 29px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding-top: 12px;
+    }
+
+    .copy-status.copied {
+      color: #ffdc75;
+    }
+
+    .copy-status.error {
+      color: #ff9c8e;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 1080px) {
+      .site-header nav {
+        margin-left: 50px;
+        gap: 30px;
+      }
+
+      .builder-shell {
+        grid-template-columns: 330px minmax(0, 1fr);
+        padding-inline: 18px;
+      }
+
+      .prompt-panel {
+        padding-inline: 22px;
+      }
+
+      .prompt-box {
+        padding: 22px;
+        font-size: 19px;
+      }
+
+      .steps-grid {
+        gap: 14px;
+      }
+
+      .step-action,
+      .step-instruction {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-header {
+        height: 70px;
+        padding: 0 20px;
+      }
+
+      .brand {
+        font-size: 27px;
+      }
+
+      .brand-mark {
+        width: 37px;
+        height: 37px;
+      }
+
+      .site-header nav,
+      .builder-pill {
+        display: none;
+      }
+
+      .menu-button {
+        display: grid;
+        gap: 5px;
+        margin-left: auto;
+        border: 0;
+        background: transparent;
+        padding: 10px 3px;
+        cursor: pointer;
+      }
+
+      .menu-button span {
+        width: 30px;
+        height: 3px;
+        background: #f4f5f7;
+        border-radius: 3px;
+      }
+
+      .mobile-menu {
+        display: grid;
+        position: absolute;
+        right: 16px;
+        top: 63px;
+        min-width: 190px;
+        background: #101925;
+        border: 1px solid #3a4858;
+        border-radius: 10px;
+        padding: 8px;
+        box-shadow: 0 20px 60px #000;
+      }
+
+      .mobile-menu a {
+        padding: 12px;
+        border-radius: 6px;
+      }
+
+      .hero {
+        min-height: 286px;
+        background-position: center;
+      }
+
+      .hero-content {
+        padding: 36px 24px;
+      }
+
+      .hero h1 {
+        font-size: clamp(34px, 10vw, 46px);
+        line-height: 1.12;
+      }
+
+      .hero p {
+        font-size: 17px;
+        line-height: 1.45;
+        max-width: 620px;
+      }
+
+      .builder-shell {
+        display: block;
+        padding: 14px 16px 30px;
+      }
+
+      .filter-panel,
+      .prompt-panel {
+        border-radius: 12px;
+      }
+
+      .filter-panel {
+        padding: 17px 17px 19px;
+      }
+
+      .step-banner {
+        min-height: 50px;
+        font-size: 22px;
+      }
+
+      .filter-group legend,
+      .field-label,
+      .range-title {
+        font-size: 15px;
+      }
+
+      .segmented-control button {
+        min-height: 45px;
+        font-size: 14px;
+      }
+
+      .service-chips button {
+        min-height: 42px;
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+
+      select,
+      .specific-search input {
+        height: 45px;
+        font-size: 14px;
+      }
+
+      .dual-range {
+        height: 35px;
+      }
+
+      .dual-range-track {
+        top: 16px;
+      }
+
+      .dual-range input[type="range"] {
+        height: 35px;
+      }
+
+      .dual-range input[type="range"]::-webkit-slider-thumb {
+        width: 23px;
+        height: 23px;
+        margin-top: -10px;
+      }
+
+      .dual-range input[type="range"]::-moz-range-thumb {
+        width: 23px;
+        height: 23px;
+      }
+
+      .rating-range input[type="range"] {
+        height: 24px;
+      }
+
+      .prompt-panel {
+        margin-top: 14px;
+        padding: 22px 18px 14px;
+      }
+
+      .prompt-panel h2 {
+        font-size: 26px;
+        margin-bottom: 15px;
+      }
+
+      .prompt-box {
+        min-height: 0;
+        padding: 20px 18px;
+        font-size: 17px;
+        line-height: 1.5;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .step-action,
+      .step-instruction {
+        min-height: 86px;
+        font-size: 18px;
+      }
+
+      .desktop-break {
+        display: none;
+      }
+
+      .copy-status {
+        font-size: 11px;
+      }
+
+      .range-ends {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand {
+        font-size: 25px;
+      }
+
+      .hero {
+        min-height: 300px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .segmented-control button {
+        font-size: 12px;
+        gap: 4px;
+      }
+
+      .service-chips {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .service-chips button {
+        justify-content: flex-start;
+      }
+
+      .more-services {
+        display: grid;
+      }
+
+      .prompt-box {
+        font-size: 16px;
+      }
+
+      .step-action,
+      .step-instruction {
+        font-size: 17px;
+      }
+
+      .copy-icon {
+        margin-right: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -174,6 +955,7 @@
           <span class="film-dot dot-four"></span>
           <span class="film-center"></span>
         </span>
+
         <span>Reel<span>Scout</span></span>
       </a>
 
@@ -183,11 +965,19 @@
       </nav>
 
       <div class="builder-pill">
-        <span aria-hidden="true">✦</span> Prompt Builder
+        <span aria-hidden="true">✦</span>Prompt Builder
       </div>
 
-      <button id="menuButton" class="menu-button" type="button" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
+      <button
+        id="menuButton"
+        class="menu-button"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
 
       <div id="mobileMenu" class="mobile-menu" hidden>
@@ -199,13 +989,18 @@
     <section id="top" class="hero">
       <div class="hero-content">
         <h1>Movie Streaming Search – Powered by IMDB</h1>
-        <p>Build detailed search request, then let ChatGPT, Gemini, etc. investigate IMDB and streaming availability.</p>
+        <p>
+          Build detailed search request, then let ChatGPT, Gemini, etc.
+          investigate IMDB and streaming availability.
+        </p>
       </div>
     </section>
 
     <div id="builder" class="builder-shell">
       <aside class="filter-panel" aria-label="Search preferences">
-        <div class="step-banner">Step 1 <span>–</span> Build Your Search</div>
+        <div class="step-banner">
+          Step 1 <span>–</span> Build Your Search
+        </div>
 
         <fieldset class="filter-group">
           <legend>What do you want to watch?</legend>
@@ -215,7 +1010,11 @@
               <span aria-hidden="true">▤</span>Movies
             </button>
 
-            <button type="button" class="active" data-content="TV Series">
+            <button
+              type="button"
+              class="active"
+              data-content="TV Series"
+            >
               <span aria-hidden="true">▣</span>TV Series
             </button>
 
@@ -229,47 +1028,131 @@
           <legend>Select preferred streaming sources</legend>
 
           <div class="service-chips" id="primaryServices">
-            <button type="button" class="selected" data-service="Netflix" aria-pressed="true">
+            <button
+              type="button"
+              class="selected"
+              data-service="Netflix"
+              aria-pressed="true"
+            >
               <span class="service-mark service-netflix">N</span>Netflix
             </button>
 
-            <button type="button" class="selected" data-service="Prime Video" aria-pressed="true">
-              <span class="service-mark service-primevideo">prime</span>Prime Video
+            <button
+              type="button"
+              class="selected"
+              data-service="Prime Video"
+              aria-pressed="true"
+            >
+              <span class="service-mark service-primevideo">prime</span>
+              Prime Video
             </button>
 
-            <button type="button" class="selected" data-service="Max" aria-pressed="true">
+            <button
+              type="button"
+              class="selected"
+              data-service="Max"
+              aria-pressed="true"
+            >
               <span class="service-mark service-max">max</span>Max
             </button>
 
-            <button type="button" data-service="Disney+" aria-pressed="false">
+            <button
+              type="button"
+              data-service="Disney+"
+              aria-pressed="false"
+            >
               <span class="service-mark service-disney">D+</span>Disney+
             </button>
 
-            <button type="button" data-service="Hulu" aria-pressed="false">
+            <button
+              type="button"
+              data-service="Hulu"
+              aria-pressed="false"
+            >
               <span class="service-mark service-hulu">h</span>Hulu
             </button>
 
-            <button id="moreButton" type="button" aria-expanded="false">
+            <button
+              id="moreButton"
+              type="button"
+              aria-expanded="false"
+            >
               <span class="service-mark">•••</span>More
             </button>
           </div>
 
-          <div id="moreServices" class="service-chips more-services" hidden>
-            <button type="button" data-service="Apple TV" aria-pressed="false">Apple TV</button>
-            <button type="button" class="selected" data-service="Peacock" aria-pressed="true">Peacock</button>
-            <button type="button" class="selected" data-service="Paramount+" aria-pressed="true">Paramount+</button>
-            <button type="button" data-service="Starz" aria-pressed="false">Starz</button>
-            <button type="button" data-service="AMC+" aria-pressed="false">AMC+</button>
-            <button type="button" data-service="Discovery+" aria-pressed="false">Discovery+</button>
-            <button type="button" data-service="Crunchyroll" aria-pressed="false">Crunchyroll</button>
-            <button type="button" data-service="BritBox" aria-pressed="false">BritBox</button>
-            <button type="button" data-service="BET+" aria-pressed="false">BET+</button>
-            <button type="button" data-service="Hallmark+" aria-pressed="false">Hallmark+</button>
+          <div
+            id="moreServices"
+            class="service-chips more-services"
+            hidden
+          >
+            <button type="button" data-service="Apple TV" aria-pressed="false">
+              Apple TV
+            </button>
+
+            <button
+              type="button"
+              class="selected"
+              data-service="Peacock"
+              aria-pressed="true"
+            >
+              Peacock
+            </button>
+
+            <button
+              type="button"
+              class="selected"
+              data-service="Paramount+"
+              aria-pressed="true"
+            >
+              Paramount+
+            </button>
+
+            <button type="button" data-service="Starz" aria-pressed="false">
+              Starz
+            </button>
+
+            <button type="button" data-service="AMC+" aria-pressed="false">
+              AMC+
+            </button>
+
+            <button
+              type="button"
+              data-service="Discovery+"
+              aria-pressed="false"
+            >
+              Discovery+
+            </button>
+
+            <button
+              type="button"
+              data-service="Crunchyroll"
+              aria-pressed="false"
+            >
+              Crunchyroll
+            </button>
+
+            <button type="button" data-service="BritBox" aria-pressed="false">
+              BritBox
+            </button>
+
+            <button type="button" data-service="BET+" aria-pressed="false">
+              BET+
+            </button>
+
+            <button
+              type="button"
+              data-service="Hallmark+"
+              aria-pressed="false"
+            >
+              Hallmark+
+            </button>
           </div>
         </fieldset>
 
         <label class="field-label">
           How would you like to watch?
+
           <select id="watchType">
             <option>Free to stream</option>
             <option>Rent or buy</option>
@@ -279,6 +1162,7 @@
 
         <label class="field-label">
           Mood &amp; Story
+
           <select id="mood">
             <option>All moods</option>
             <option selected>Action</option>
@@ -299,6 +1183,7 @@
 
         <label class="field-label">
           Format &amp; Topic
+
           <select id="topic">
             <option selected>All formats &amp; topics</option>
             <option>Animation</option>
@@ -330,8 +1215,23 @@
               <span id="yearTrack"></span>
             </div>
 
-            <input id="yearStart" aria-label="Starting release year" type="range" min="2000" max="2026" value="2024">
-            <input id="yearEnd" aria-label="Ending release year" type="range" min="2000" max="2026" value="2026">
+            <input
+              id="yearStart"
+              aria-label="Starting release year"
+              type="range"
+              min="2000"
+              max="2026"
+              value="2024"
+            >
+
+            <input
+              id="yearEnd"
+              aria-label="Ending release year"
+              type="range"
+              min="2000"
+              max="2026"
+              value="2026"
+            >
           </div>
 
           <div class="range-ends">
@@ -346,7 +1246,15 @@
             <output id="ratingOutput">7.0+</output>
           </div>
 
-          <input id="rating" aria-label="Minimum IMDb rating" type="range" min="5" max="9" step="0.5" value="7">
+          <input
+            id="rating"
+            aria-label="Minimum IMDb rating"
+            type="range"
+            min="5"
+            max="9"
+            step="0.5"
+            value="7"
+          >
 
           <div class="range-ends">
             <span>5.0</span>
@@ -356,8 +1264,11 @@
 
         <label class="field-label">
           Choose Your Sort
+
           <select id="sort">
-            <option value="alphabetical" selected>Alphabetical by title</option>
+            <option value="alphabetical" selected>
+              Alphabetical by title
+            </option>
             <option value="rating">IMDb rating: high to low</option>
             <option value="newest">Date: newest to oldest</option>
             <option value="oldest">Date: oldest to newest</option>
@@ -367,6 +1278,7 @@
         <div class="specific-search">
           <label class="field-label">
             Looking for something specific?
+
             <select id="specificType">
               <option>None</option>
               <option>Actor/actress</option>
@@ -377,24 +1289,45 @@
           </label>
 
           <label id="specificWrap" hidden>
-            <span class="sr-only" id="specificLabel">Specific request</span>
-            <input id="specificValue" aria-labelledby="specificLabel">
+            <span class="sr-only" id="specificLabel">
+              Specific request
+            </span>
+
+            <input
+              id="specificValue"
+              aria-labelledby="specificLabel"
+            >
           </label>
         </div>
       </aside>
 
-      <section class="prompt-panel" aria-label="Generated search prompt">
+      <section
+        class="prompt-panel"
+        aria-label="Generated search prompt"
+      >
         <div>
-          <span class="prompt-eyebrow">Live IMDb-only prompt preview</span>
+          <span class="prompt-eyebrow">
+            Live IMDb-only prompt preview
+          </span>
+
           <h2>Your Search Prompt</h2>
         </div>
 
-        <div id="promptBox" class="prompt-box" aria-live="polite"></div>
+        <div
+          id="promptBox"
+          class="prompt-box"
+          aria-live="polite"
+        ></div>
 
         <div id="steps" class="steps-grid">
-          <button id="copyButton" class="step-action" type="button">
+          <button
+            id="copyButton"
+            class="step-action"
+            type="button"
+          >
             <span class="copy-icon" aria-hidden="true">
-              <i></i><i></i>
+              <i></i>
+              <i></i>
             </span>
 
             <span>
@@ -406,14 +1339,20 @@
 
           <div class="step-instruction">
             <span>
-              Step 3 <b>–</b> Open ChatGPT,<br>
-              Gemini, etc. and paste<br>
+              Step 3 <b>–</b> Open ChatGPT,
+              <br>
+              Gemini, etc. and paste
+              <br>
               prompt you just copied.
             </span>
           </div>
         </div>
 
-        <div id="copyStatus" class="copy-status" role="status">
+        <div
+          id="copyStatus"
+          class="copy-status"
+          role="status"
+        >
           Your prompt updates automatically as you change the filters.
         </div>
       </section>
@@ -438,8 +1377,14 @@
       const copyStatus = byId("copyStatus");
 
       function joinNatural(items) {
-        if (!items.length) return "any streaming service";
-        if (items.length === 1) return items[0];
+        if (!items.length) {
+          return "any streaming service";
+        }
+
+        if (items.length === 1) {
+          return items[0];
+        }
+
         return `${items.slice(0, -1).join(", ")} or ${items.at(-1)}`;
       }
 
@@ -472,7 +1417,9 @@
         ].filter(Boolean);
 
         const genreText = genreParts.length
-          ? `, in the ${genreParts.length > 1 ? "categories" : "category"} of ${genreParts.join(" and ")}`
+          ? `, in the ${
+              genreParts.length > 1 ? "categories" : "category"
+            } of ${genreParts.join(" and ")}`
           : "";
 
         const watchText =
@@ -486,13 +1433,20 @@
 
         if (specificType !== "None" && specificValue) {
           if (specificType === "Actor/actress") {
-            specificText = ` Include titles featuring ${specificValue}.`;
+            specificText =
+              ` Include titles featuring ${specificValue}.`;
           } else if (specificType === "Director") {
-            specificText = ` Include titles directed by ${specificValue}.`;
-          } else if (specificType === "Override the year range") {
-            specificText = ` Override the selected year range and use ${specificValue} instead.`;
+            specificText =
+              ` Include titles directed by ${specificValue}.`;
+          } else if (
+            specificType === "Override the year range"
+          ) {
+            specificText =
+              ` Override the selected year range and use ` +
+              `${specificValue} instead.`;
           } else {
-            specificText = ` Also follow this request: ${specificValue}.`;
+            specificText =
+              ` Also follow this request: ${specificValue}.`;
           }
         }
 
@@ -500,18 +1454,24 @@
           sort === "alphabetical"
             ? "alphabetically by title"
             : sort === "rating"
-              ? "by IMDB rating from highest to lowest"
+              ? "by IMDb rating from highest to lowest"
               : sort === "newest"
                 ? "from newest to oldest"
                 : "from oldest to newest";
 
-        return `I would like you to investigate the IMDB website to identify ${subject} rated ${rating} or higher, ${dateText}${genreText}. Show titles ${watchText} on ${joinNatural([...state.services])}.${specificText}
+        return `I would like you to investigate the IMDb website to identify ${subject} rated ${rating} or higher, ${dateText}${genreText}. Show titles ${watchText} on ${joinNatural([...state.services])}.${specificText}
 
-SOURCE RESTRICTION — IMDB ONLY: Use IMDB.com as your only source. Open, read, and cite only pages on the imdb.com domain. Do not search, open, cite, or use information from Google results, Wikipedia, JustWatch, Rotten Tomatoes, streaming-service websites, or any other website. Do not broaden the research beyond IMDB.
+SOURCE RESTRICTION — IMDb ONLY (MANDATORY):
 
-Every title, release year, length or episode count, streaming service, rating, and link must be verified on an IMDB page. If a required fact or current streaming availability cannot be verified on IMDB, omit that title rather than checking another source.
+Use only pages hosted on the imdb.com domain. Do not open, use, rely on, or cite search-result snippets or information from any other website, including Google, Wikipedia, JustWatch, Rotten Tomatoes, streaming-service websites, or other non-IMDb sources.
 
-Return each result in this format: Title - Year Released - Length (if movie) or Episodes (if series) - Streaming Service - IMDB Rating - IMDB Link. Present the results as a bulleted list with a solid dot (•) before each entry. Keep each individual entry single-spaced and on one line. Insert one blank line between entries for readability, especially on mobile devices. Sort the results ${sortText}. Provide a working IMDB Link for every result. At the end, include this statement: “Sources used: IMDB.com only.”`;
+Only report ${subject} for which IMDb itself displays the requested current streaming availability from at least one of the streaming services selected in this request. If IMDb does not display the requested streaming availability for a title, exclude that title. Do not consult another website to verify or supplement availability.
+
+Every title, release year, length or episode count, streaming service, IMDb rating, and IMDb link included in the results must be verifiable on IMDb.
+
+If no titles meet all requirements using IMDb alone, respond exactly: “No titles with IMDb-verified streaming availability were found for these selections.” Do not broaden the search or use other sources.
+
+Return each result in this format: Title - Year Released - Length (if movie) or Episodes (if series) - Streaming Service - IMDb Rating - IMDb Link. Present the results as a bulleted list with a solid dot (•) before each entry. Keep each individual entry single-spaced and on one line. Insert one blank line between entries for readability, especially on mobile devices. Sort the results ${sortText}. Provide a working IMDb Link for every result. At the end, include this statement: “Sources used: IMDb.com only.”`;
       }
 
       function updatePrompt() {
@@ -522,76 +1482,119 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
         const start = byId("yearStart");
         const end = byId("yearEnd");
 
-        if (changed === start && Number(start.value) >= Number(end.value)) {
+        if (
+          changed === start &&
+          Number(start.value) >= Number(end.value)
+        ) {
           start.value = String(Number(end.value) - 1);
         }
 
-        if (changed === end && Number(end.value) <= Number(start.value)) {
+        if (
+          changed === end &&
+          Number(end.value) <= Number(start.value)
+        ) {
           end.value = String(Number(start.value) + 1);
         }
 
         const startValue = Number(start.value);
         const endValue = Number(end.value);
 
-        byId("yearOutput").textContent = `${startValue}–${endValue}`;
-        byId("yearTrack").style.left = `${((startValue - 2000) / 26) * 100}%`;
-        byId("yearTrack").style.right = `${100 - ((endValue - 2000) / 26) * 100}%`;
+        byId("yearOutput").textContent =
+          `${startValue}–${endValue}`;
+
+        byId("yearTrack").style.left =
+          `${((startValue - 2000) / 26) * 100}%`;
+
+        byId("yearTrack").style.right =
+          `${100 - ((endValue - 2000) / 26) * 100}%`;
 
         updatePrompt();
       }
 
-      byId("contentTypes").addEventListener("click", (event) => {
-        const button = event.target.closest("button[data-content]");
-        if (!button) return;
+      byId("contentTypes").addEventListener(
+        "click",
+        (event) => {
+          const button =
+            event.target.closest("button[data-content]");
 
-        state.contentType = button.dataset.content;
-
-        document.querySelectorAll("[data-content]").forEach((item) => {
-          item.classList.toggle("active", item === button);
-        });
-
-        updatePrompt();
-      });
-
-      document.querySelectorAll("button[data-service]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const service = button.dataset.service;
-
-          if (state.services.has(service)) {
-            state.services.delete(service);
-          } else {
-            state.services.add(service);
+          if (!button) {
+            return;
           }
 
-          const selected = state.services.has(service);
+          state.contentType = button.dataset.content;
 
-          button.classList.toggle("selected", selected);
-          button.setAttribute("aria-pressed", String(selected));
+          document
+            .querySelectorAll("[data-content]")
+            .forEach((item) => {
+              item.classList.toggle(
+                "active",
+                item === button
+              );
+            });
 
           updatePrompt();
+        }
+      );
+
+      document
+        .querySelectorAll("button[data-service]")
+        .forEach((button) => {
+          button.addEventListener("click", () => {
+            const service = button.dataset.service;
+
+            if (state.services.has(service)) {
+              state.services.delete(service);
+            } else {
+              state.services.add(service);
+            }
+
+            const selected = state.services.has(service);
+
+            button.classList.toggle("selected", selected);
+            button.setAttribute(
+              "aria-pressed",
+              String(selected)
+            );
+
+            updatePrompt();
+          });
         });
-      });
 
       byId("moreButton").addEventListener("click", () => {
         const panel = byId("moreServices");
         const opening = panel.hidden;
 
         panel.hidden = !opening;
-        byId("moreButton").classList.toggle("selected", opening);
-        byId("moreButton").setAttribute("aria-expanded", String(opening));
+
+        byId("moreButton").classList.toggle(
+          "selected",
+          opening
+        );
+
+        byId("moreButton").setAttribute(
+          "aria-expanded",
+          String(opening)
+        );
       });
 
-      ["watchType", "mood", "topic", "sort"].forEach((id) => {
+      [
+        "watchType",
+        "mood",
+        "topic",
+        "sort"
+      ].forEach((id) => {
         byId(id).addEventListener("change", updatePrompt);
       });
 
-      byId("yearStart").addEventListener("input", (event) => {
-        updateYearRange(event.target);
-      });
+      byId("yearStart").addEventListener(
+        "input",
+        (event) => updateYearRange(event.target)
+      );
 
-      byId("yearEnd").addEventListener("input", (event) => {
-        updateYearRange(event.target);
-      });
+      byId("yearEnd").addEventListener(
+        "input",
+        (event) => updateYearRange(event.target)
+      );
 
       byId("rating").addEventListener("input", () => {
         byId("ratingOutput").textContent =
@@ -600,77 +1603,103 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
         updatePrompt();
       });
 
-      byId("specificType").addEventListener("change", () => {
-        const type = byId("specificType").value;
-        const input = byId("specificValue");
+      byId("specificType").addEventListener(
+        "change",
+        () => {
+          const type = byId("specificType").value;
+          const input = byId("specificValue");
 
-        byId("specificWrap").hidden = type === "None";
-        input.value = "";
+          byId("specificWrap").hidden = type === "None";
+          input.value = "";
 
-        input.placeholder =
-          type === "Actor/actress"
-            ? "Enter actor or actress name"
-            : type === "Director"
-              ? "Enter director name"
-              : type === "Override the year range"
-                ? "Enter a year or range, such as 1990–1999"
-                : "Describe your custom request";
+          input.placeholder =
+            type === "Actor/actress"
+              ? "Enter actor or actress name"
+              : type === "Director"
+                ? "Enter director name"
+                : type === "Override the year range"
+                  ? "Enter a year or range, such as 1990–1999"
+                  : "Describe your custom request";
 
-        updatePrompt();
-      });
-
-      byId("specificValue").addEventListener("input", updatePrompt);
-
-      byId("copyButton").addEventListener("click", async () => {
-        let copied = false;
-
-        try {
-          await navigator.clipboard.writeText(buildPrompt());
-          copied = true;
-        } catch (_) {
-          const fallback = document.createElement("textarea");
-
-          fallback.value = buildPrompt();
-          fallback.setAttribute("readonly", "");
-          fallback.style.position = "fixed";
-          fallback.style.opacity = "0";
-
-          document.body.appendChild(fallback);
-          fallback.select();
-
-          copied = document.execCommand("copy");
-          fallback.remove();
+          updatePrompt();
         }
+      );
 
-        copyStatus.textContent = copied
-          ? "Prompt copied to your clipboard."
-          : "Copy failed. Select the prompt text and copy it manually.";
+      byId("specificValue").addEventListener(
+        "input",
+        updatePrompt
+      );
 
-        copyStatus.className =
-          `copy-status ${copied ? "copied" : "error"}`;
+      byId("copyButton").addEventListener(
+        "click",
+        async () => {
+          let copied = false;
 
-        window.setTimeout(() => {
-          copyStatus.textContent =
-            "Your prompt updates automatically as you change the filters.";
+          try {
+            await navigator.clipboard.writeText(
+              buildPrompt()
+            );
 
-          copyStatus.className = "copy-status";
-        }, 2200);
-      });
+            copied = true;
+          } catch (_) {
+            const fallback =
+              document.createElement("textarea");
 
-      byId("menuButton").addEventListener("click", () => {
-        const menu = byId("mobileMenu");
-        const opening = menu.hidden;
+            fallback.value = buildPrompt();
+            fallback.setAttribute("readonly", "");
+            fallback.style.position = "fixed";
+            fallback.style.opacity = "0";
 
-        menu.hidden = !opening;
-        byId("menuButton").setAttribute("aria-expanded", String(opening));
-      });
+            document.body.appendChild(fallback);
+            fallback.select();
 
-      document.querySelectorAll("#mobileMenu a").forEach((link) => {
-        link.addEventListener("click", () => {
-          byId("mobileMenu").hidden = true;
-          byId("menuButton").setAttribute("aria-expanded", "false");
+            copied = document.execCommand("copy");
+            fallback.remove();
+          }
+
+          copyStatus.textContent = copied
+            ? "Prompt copied to your clipboard."
+            : "Copy failed. Select the prompt text and copy it manually.";
+
+          copyStatus.className =
+            `copy-status ${copied ? "copied" : "error"}`;
+
+          window.setTimeout(() => {
+            copyStatus.textContent =
+              "Your prompt updates automatically as you change the filters.";
+
+            copyStatus.className = "copy-status";
+          }, 2200);
+        }
+      );
+
+      byId("menuButton").addEventListener(
+        "click",
+        () => {
+          const menu = byId("mobileMenu");
+          const opening = menu.hidden;
+
+          menu.hidden = !opening;
+
+          byId("menuButton").setAttribute(
+            "aria-expanded",
+            String(opening)
+          );
+        }
+      );
+
+      document
+        .querySelectorAll("#mobileMenu a")
+        .forEach((link) => {
+          link.addEventListener("click", () => {
+            byId("mobileMenu").hidden = true;
+
+            byId("menuButton").setAttribute(
+              "aria-expanded",
+              "false"
+            );
+          });
         });
-      });
 
       updateYearRange();
     })();
