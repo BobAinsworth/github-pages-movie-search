@@ -1,1607 +1,1836 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Build an IMDb movie and TV streaming search prompt.">
-  <title>Movie Streaming Search – Powered by IMDb</title>
-
-  <style>
-    :root {
-      --background: #05080d;
-      --panel: #0c1520;
-      --panel-dark: #07101a;
-      --border: #344353;
-      --gold: #f2b821;
-      --gold-light: #ffcf52;
-      --gold-dark: #e8a817;
-      --text: #f7f8fb;
-      --muted: #b4bdc9;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      background: var(--background);
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 78% 22%, #102136 0, transparent 34rem),
-        var(--background);
-      font-family: Inter, Arial, Helvetica, sans-serif;
-    }
-
-    button,
-    select,
-    input {
-      font: inherit;
-    }
-
-    button,
-    select,
-    input,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    button {
-      color: inherit;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    fieldset {
-      min-width: 0;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* Header */
-
-    .site-header {
-      height: 82px;
-      padding: 0 2.1vw;
-      display: flex;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      background: rgba(3, 8, 14, 0.94);
-      border-bottom: 1px solid #293746;
-      backdrop-filter: blur(18px);
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 13px;
-      color: #f2c450;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 31px;
-      font-weight: 700;
-      letter-spacing: -0.035em;
-    }
-
-    .brand-mark {
-      width: 41px;
-      height: 41px;
-      border: 3px solid #efb82a;
-      border-radius: 50%;
-      position: relative;
-      display: block;
-      box-shadow: 0 0 24px rgba(245, 197, 24, 0.12);
-    }
-
-    .brand-mark::after {
-      content: "";
-      width: 15px;
-      height: 4px;
-      background: #efb82a;
-      position: absolute;
-      bottom: -7px;
-      right: -10px;
-      rotate: 48deg;
-      border-radius: 4px;
-    }
-
-    .film-dot {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: #efb82a;
-      border-radius: 50%;
-    }
-
-    .dot-one {
-      left: 6px;
-      top: 6px;
-    }
-
-    .dot-two {
-      right: 6px;
-      top: 6px;
-    }
-
-    .dot-three {
-      left: 6px;
-      bottom: 6px;
-    }
-
-    .dot-four {
-      right: 6px;
-      bottom: 6px;
-    }
-
-    .film-center {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border: 2px solid #efb82a;
-      border-radius: 50%;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .site-header nav {
-      display: flex;
-      gap: 48px;
-      margin-left: 92px;
-    }
-
-    .site-header nav a {
-      color: #f0f2f5;
-      font-size: 16px;
-    }
-
-    .builder-pill {
-      margin-left: auto;
-      border: 1px solid var(--gold);
-      border-radius: 999px;
-      padding: 10px 18px;
-      color: var(--gold-light);
-      font-size: 15px;
-    }
-
-    .builder-pill span {
-      margin-right: 9px;
-    }
-
-    .menu-button,
-    .mobile-menu {
-      display: none;
-    }
-
-    /* Hero */
-
-    .hero {
-      min-height: 220px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-      background:
-        #07101a url("images/reelscout.jpg") center 47% / cover no-repeat;
-      border-bottom: 1px solid #2b3948;
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(4, 8, 13, 0.82),
-          rgba(5, 12, 20, 0.35) 48%,
-          rgba(4, 8, 13, 0.78)
-        ),
-        linear-gradient(
-          0deg,
-          rgba(4, 9, 15, 0.63),
-          rgba(4, 9, 15, 0.18)
-        );
-    }
-
-    .hero-content {
-      padding: 36px 20px;
-    }
-
-    .hero h1 {
-      margin: 0 0 13px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(34px, 3.5vw, 54px);
-      line-height: 1.06;
-      letter-spacing: -0.025em;
-      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-    }
-
-    .hero p {
-      margin: 0;
-      color: #eef1f5;
-      font-size: 17px;
-      text-shadow: 0 2px 8px #000;
-    }
-
-    /* Main layout */
-
-    .builder-shell {
-      display: grid;
-      grid-template-columns: minmax(340px, 31%) minmax(0, 1fr);
-      gap: 18px;
-      max-width: 1540px;
-      margin: 0 auto;
-      padding: 0 30px 38px;
-    }
-
-    .filter-panel,
-    .prompt-panel {
-      border: 1px solid var(--border);
-      background:
-        linear-gradient(
-          145deg,
-          rgba(12, 23, 35, 0.98),
-          rgba(6, 13, 22, 0.99)
-        );
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
-    }
-
-    .filter-panel {
-      padding: 15px 20px 21px;
-      border-radius: 13px;
-    }
-
-    .prompt-panel {
-      min-width: 0;
-      padding: 34px 32px 20px;
-      border-radius: 13px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .gold-box {
-      color: #111;
-      background:
-        linear-gradient(
-          110deg,
-          #f7bd2d,
-          #efa817 72%,
-          #ffcb46
-        );
-      border: 1px solid #f1b729;
-      border-radius: 8px;
-      box-shadow:
-        inset 0 1px rgba(255, 255, 255, 0.25),
-        0 10px 28px rgba(0, 0, 0, 0.16);
-    }
-
-    .step-banner {
-      min-height: 45px;
-      padding: 8px 14px;
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 21px;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    /* Filters */
-
-    .filter-group {
-      border: 0;
-      padding: 0;
-      margin: 0 0 12px;
-    }
-
-    .filter-group legend,
-    .field-label,
-    .range-title {
-      color: #f1f3f6;
-      font-size: 13px;
-      font-weight: 650;
-    }
-
-    .segmented-control {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      margin-top: 8px;
-    }
-
-    .segmented-control button {
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      background: #09111b;
-      border: 1px solid #425060;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .segmented-control button:first-child {
-      border-radius: 7px 0 0 7px;
-    }
-
-    .segmented-control button:last-child {
-      border-radius: 0 7px 7px 0;
-    }
-
-    .segmented-control button + button {
-      border-left: 0;
-    }
-
-    .segmented-control button.active,
-    .service-chips button.selected {
-      color: #101216;
-      background:
-        linear-gradient(
-          135deg,
-          #f7c13d,
-          #e8a817
-        );
-      border-color: #f2b925;
-      font-weight: 750;
-      box-shadow:
-        inset 0 1px rgba(255, 255, 255, 0.25),
-        0 7px 18px rgba(0, 0, 0, 0.16);
-    }
-
-    .service-chips {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .service-chips button {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 10px;
-      color: #f1f3f6;
-      background: #08111b;
-      border: 1px solid #3a4858;
-      border-radius: 7px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .service-mark {
-      font-weight: 800;
-    }
-
-    .netflix {
-      color: #e50914;
-      font-size: 16px;
-    }
-
-    .prime {
-      color: #33a8e2;
-    }
-
-    .max {
-      color: #3789ff;
-    }
-
-    .disney {
-      color: #c6d7ff;
-    }
-
-    .hulu {
-      color: #28dc74;
-      font-size: 16px;
-    }
-
-    .service-chips button.selected .service-mark {
-      color: #101216;
-    }
-
-    .more-services {
-      display: none;
-      padding: 9px;
-      max-height: 145px;
-      overflow: auto;
-      background: #07101a;
-      border-radius: 8px;
-    }
-
-    .more-services.open {
-      display: flex;
-    }
-
-    .field-label {
-      display: grid;
-      gap: 6px;
-      margin: 0 0 10px;
-    }
-
-    select,
-    .conditional-input {
-      width: 100%;
-      height: 34px;
-      padding: 0 10px;
-      border-radius: 7px;
-      outline: none;
-      font-size: 12px;
-    }
-
-    /*
-      All dropdowns use the same gold selected background
-      as the active Movies/TV Series/Both button.
-    */
-
-    select {
-      color: #101216;
-      background-color: var(--gold);
-      background-image:
-        linear-gradient(
-          135deg,
-          #f7c13d,
-          #e8a817
-        );
-      border: 1px solid #f2b925;
-      font-weight: 750;
-      box-shadow:
-        inset 0 1px rgba(255, 255, 255, 0.25),
-        0 7px 18px rgba(0, 0, 0, 0.12);
-      cursor: pointer;
-    }
-
-    select option {
-      color: #f7f8fb;
-      background: #101925;
-      font-weight: 500;
-    }
-
-    .conditional-input {
-      display: none;
-      margin: -3px 0 10px;
-      color: #f1f3f6;
-      background: #09121c;
-      border: 1px solid #3b4958;
-    }
-
-    .conditional-input.visible {
-      display: block;
-    }
-
-    select:focus,
-    input:focus,
-    button:focus-visible,
-    a:focus-visible {
-      outline: 2px solid var(--gold);
-      outline-offset: 2px;
-    }
-
-    /* Range controls */
-
-    .range-group {
-      margin: 3px 0 11px;
-    }
-
-    .range-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .range-title output {
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .dual-range {
-      position: relative;
-      height: 27px;
-      margin-top: 3px;
-    }
-
-    .dual-range-track {
-      position: absolute;
-      left: 2px;
-      right: 2px;
-      top: 11px;
-      height: 4px;
-      background: #47515b;
-      border-radius: 99px;
-    }
-
-    .dual-range-fill {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      background: var(--gold);
-      border-radius: 99px;
-    }
-
-    .dual-range input[type="range"] {
-      appearance: none;
-      -webkit-appearance: none;
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 27px;
-      margin: 0;
-      background: transparent;
-      pointer-events: none;
-    }
-
-    .dual-range input[type="range"]::-webkit-slider-runnable-track {
-      height: 4px;
-      background: transparent;
-    }
-
-    .dual-range input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      margin-top: -7px;
-      background: #d99b19;
-      border: 1px solid white;
-      border-radius: 50%;
-      box-shadow: 0 0 0 2px #14202c;
-      pointer-events: auto;
-      cursor: grab;
-    }
-
-    .dual-range input[type="range"]::-moz-range-track {
-      height: 4px;
-      background: transparent;
-    }
-
-    .dual-range input[type="range"]::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      background: #d99b19;
-      border: 1px solid white;
-      border-radius: 50%;
-      box-shadow: 0 0 0 2px #14202c;
-      pointer-events: auto;
-      cursor: grab;
-    }
-
-    .range-ends {
-      display: flex;
-      justify-content: space-between;
-      margin-top: -3px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .rating-range input[type="range"] {
-      width: 100%;
-      height: 17px;
-      margin: 3px 0 0;
-      accent-color: var(--gold);
-    }
-
-    /* Search summary */
-
-    .prompt-panel h2 {
-      margin: 0 0 24px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 29px;
-      line-height: 1.2;
-    }
-
-    .prompt-box {
-      flex: 1;
-      min-height: 350px;
-      padding: 25px 30px;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(10, 21, 33, 0.92),
-          rgba(7, 15, 24, 0.9)
-        );
-      border: 1px solid #455364;
-      border-radius: 10px;
-      font-size: clamp(19px, 1.75vw, 28px);
-      line-height: 1.48;
-    }
-
-    .prompt-box p {
-      margin: 0;
-    }
-
-    .summary-callout {
-      margin: 18px 0 0;
-      padding: 16px 20px;
-      color: var(--gold-light);
-      background: rgba(242, 184, 33, 0.1);
-      border: 1px solid rgba(242, 184, 33, 0.72);
-      border-radius: 8px;
-      font-size: clamp(16px, 1.25vw, 20px);
-      font-weight: 800;
-      text-align: center;
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.08fr;
-      gap: 24px;
-      margin-top: 18px;
-    }
-
-    .step-action,
-    .step-instruction {
-      min-height: 138px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: clamp(17px, 1.45vw, 25px);
-      line-height: 1.32;
-    }
-
-    .step-action {
-      cursor: pointer;
-      font-weight: 540;
-    }
-
-    .step-action:hover {
-      filter: brightness(1.06);
-      transform: translateY(-2px);
-    }
-
-    .copy-icon {
-      width: 39px;
-      height: 38px;
-      position: relative;
-      margin-right: 18px;
-      flex: 0 0 auto;
-    }
-
-    .copy-icon i {
-      position: absolute;
-      width: 25px;
-      height: 28px;
-      border: 2px solid #19140a;
-      border-radius: 4px;
-    }
-
-    .copy-icon i:first-child {
-      left: 0;
-      top: 0;
-    }
-
-    .copy-icon i:last-child {
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .copy-status {
-      min-height: 29px;
-      padding-top: 12px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-    }
-
-    .copy-status.success {
-      color: #ffdc75;
-    }
-
-    .copy-status.error {
-      color: #ff9c8e;
-    }
-
-    /* Tablet */
-
-    @media (max-width: 1080px) {
-      .site-header nav {
-        margin-left: 50px;
-        gap: 30px;
-      }
-
-      .builder-shell {
-        grid-template-columns: 330px minmax(0, 1fr);
-        padding-inline: 18px;
-      }
-
-      .prompt-panel {
-        padding-inline: 22px;
-      }
-
-      .prompt-box {
-        padding: 22px;
-        font-size: 19px;
-      }
-
-      .steps-grid {
-        gap: 14px;
-      }
-
-      .step-action,
-      .step-instruction {
-        font-size: 17px;
-      }
-    }
-
-    /* Mobile */
-
-    @media (max-width: 760px) {
-      .site-header {
-        height: 70px;
-        padding: 0 20px;
-      }
-
-      .brand {
-        font-size: 27px;
-      }
-
-      .brand-mark {
-        width: 37px;
-        height: 37px;
-      }
-
-      .site-header nav,
-      .builder-pill {
-        display: none;
-      }
-
-      .menu-button {
-        display: grid;
-        gap: 5px;
-        margin-left: auto;
-        padding: 10px 3px;
-        background: transparent;
-        border: 0;
-        cursor: pointer;
-      }
-
-      .menu-button span {
-        width: 30px;
-        height: 3px;
-        background: #f4f5f7;
-        border-radius: 3px;
-      }
-
-      .mobile-menu {
-        position: absolute;
-        right: 16px;
-        top: 63px;
-        min-width: 190px;
-        padding: 8px;
-        background: #101925;
-        border: 1px solid #3a4858;
-        border-radius: 10px;
-        box-shadow: 0 20px 60px #000;
-      }
-
-      .mobile-menu.open {
-        display: grid;
-      }
-
-      .mobile-menu a {
-        padding: 12px;
-        border-radius: 6px;
-      }
-
-      .hero {
-        min-height: 286px;
-        background-position: center;
-      }
-
-      .hero-content {
-        padding: 36px 24px;
-      }
-
-      .hero h1 {
-        font-size: clamp(34px, 10vw, 46px);
-        line-height: 1.12;
-      }
-
-      .hero p {
-        font-size: 17px;
-        line-height: 1.45;
-      }
-
-      .builder-shell {
-        display: block;
-        padding: 14px 16px 30px;
-      }
-
-      .filter-panel,
-      .prompt-panel {
-        border-radius: 12px;
-      }
-
-      .filter-panel {
-        padding: 17px 17px 19px;
-      }
-
-      .step-banner {
-        min-height: 50px;
-        font-size: 22px;
-      }
-
-      .filter-group legend,
-      .field-label,
-      .range-title {
-        font-size: 15px;
-      }
-
-      .segmented-control button {
-        min-height: 45px;
-        font-size: 14px;
-      }
-
-      .service-chips button {
-        min-height: 42px;
-        padding: 8px 12px;
-        font-size: 13px;
-      }
-
-      select,
-      .conditional-input {
-        height: 45px;
-        font-size: 14px;
-      }
-
-      .dual-range {
-        height: 35px;
-      }
-
-      .dual-range-track {
-        top: 16px;
-      }
-
-      .dual-range input[type="range"] {
-        height: 35px;
-      }
-
-      .dual-range input[type="range"]::-webkit-slider-thumb {
-        width: 23px;
-        height: 23px;
-        margin-top: -10px;
-      }
-
-      .dual-range input[type="range"]::-moz-range-thumb {
-        width: 23px;
-        height: 23px;
-      }
-
-      .rating-range input[type="range"] {
-        height: 24px;
-      }
-
-      .prompt-panel {
-        margin-top: 14px;
-        padding: 22px 18px 14px;
-      }
-
-      .prompt-panel h2 {
-        margin-bottom: 15px;
-        font-size: 26px;
-      }
-
-      .prompt-box {
-        min-height: 0;
-        padding: 20px 18px;
-        font-size: 17px;
-        line-height: 1.5;
-      }
-
-      .summary-callout {
-        margin-top: 24px;
-        padding: 14px;
-        font-size: 16px;
-      }
-
-      .steps-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-top: 16px;
-      }
-
-      .step-action,
-      .step-instruction {
-        min-height: 86px;
-        font-size: 18px;
-      }
-
-      .desktop-break {
-        display: none;
-      }
-
-      .copy-status {
-        font-size: 11px;
-      }
-
-      .range-ends {
-        font-size: 11px;
-      }
-    }
-
-    @media (max-width: 430px) {
-      .brand {
-        font-size: 25px;
-      }
-
-      .hero {
-        min-height: 300px;
-      }
-
-      .hero h1 {
-        font-size: 36px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .segmented-control button {
-        gap: 4px;
-        font-size: 12px;
-      }
-
-      .service-chips {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .service-chips button {
-        justify-content: flex-start;
-      }
-
-      .more-services.open {
-        display: grid;
-      }
-
-      .prompt-box {
-        font-size: 16px;
-      }
-
-      .step-action,
-      .step-instruction {
-        font-size: 17px;
-      }
-
-      .copy-icon {
-        margin-right: 12px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Build an IMDb movie and TV streaming search prompt.">
+<title>Movie Streaming Search – Powered by IMDb</title>
+
+<style>
+:root {
+--background: #05080d;
+--panel: #0c1520;
+--panel-dark: #07101a;
+--border: #344353;
+--gold: #f2b821;
+--gold-light: #ffcf52;
+--gold-dark: #e8a817;
+--text: #f7f8fb;
+--muted: #b4bdc9;
+}
+
+* {
+box-sizing: border-box;
+}
+
+html {
+scroll-behavior: smooth;
+background: var(--background);
+}
+
+body {
+margin: 0;
+min-height: 100vh;
+color: var(--text);
+background:
+radial-gradient(circle at 78% 22%, #102136 0, transparent 34rem),
+var(--background);
+font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+button,
+select,
+input {
+font: inherit;
+}
+
+button,
+select,
+input,
+a {
+-webkit-tap-highlight-color: transparent;
+}
+
+button {
+color: inherit;
+}
+
+a {
+color: inherit;
+text-decoration: none;
+}
+
+fieldset {
+min-width: 0;
+}
+
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+
+/* Header */
+
+.site-header {
+height: 82px;
+padding: 0 2.1vw;
+display: flex;
+align-items: center;
+position: sticky;
+top: 0;
+z-index: 60;
+background: rgba(3, 8, 14, 0.94);
+border-bottom: 1px solid #293746;
+backdrop-filter: blur(18px);
+}
+
+.brand {
+display: inline-flex;
+align-items: center;
+gap: 13px;
+color: #f2c450;
+font-family: Georgia, "Times New Roman", serif;
+font-size: 31px;
+font-weight: 700;
+letter-spacing: -0.035em;
+}
+
+.brand-mark {
+width: 41px;
+height: 41px;
+border: 3px solid #efb82a;
+border-radius: 50%;
+position: relative;
+display: block;
+box-shadow: 0 0 24px rgba(245, 197, 24, 0.12);
+}
+
+.brand-mark::after {
+content: "";
+width: 15px;
+height: 4px;
+background: #efb82a;
+position: absolute;
+bottom: -7px;
+right: -10px;
+rotate: 48deg;
+border-radius: 4px;
+}
+
+.film-dot {
+position: absolute;
+width: 8px;
+height: 8px;
+background: #efb82a;
+border-radius: 50%;
+}
+
+.dot-one {
+left: 6px;
+top: 6px;
+}
+
+.dot-two {
+right: 6px;
+top: 6px;
+}
+
+.dot-three {
+left: 6px;
+bottom: 6px;
+}
+
+.dot-four {
+right: 6px;
+bottom: 6px;
+}
+
+.film-center {
+position: absolute;
+width: 8px;
+height: 8px;
+border: 2px solid #efb82a;
+border-radius: 50%;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+}
+
+.site-header nav {
+display: flex;
+gap: 48px;
+margin-left: 92px;
+}
+
+.getting-started-button {
+position: relative;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-height: 44px;
+padding: 10px 20px;
+color: #11151a;
+background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+border: 1px solid #ffda72;
+border-radius: 999px;
+font-size: 16px;
+font-weight: 800;
+cursor: pointer;
+box-shadow: 0 7px 24px rgba(242, 184, 33, 0.25);
+transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.getting-started-button:hover,
+.getting-started-button:focus-visible {
+transform: translateY(-1px);
+box-shadow: 0 10px 30px rgba(242, 184, 33, 0.38);
+outline: 3px solid rgba(255, 207, 82, 0.32);
+outline-offset: 3px;
+}
+
+.getting-started-button.is-new {
+animation: start-pulse 1.8s ease-in-out 2;
+}
+
+.start-badge {
+position: absolute;
+left: 50%;
+top: -14px;
+transform: translateX(-50%);
+padding: 3px 7px;
+color: #fff;
+background: #c64a31;
+border: 2px solid #05080d;
+border-radius: 999px;
+font-size: 9px;
+font-weight: 900;
+letter-spacing: 0.08em;
+line-height: 1;
+white-space: nowrap;
+}
+
+@keyframes start-pulse {
+0%, 100% {
+box-shadow: 0 7px 24px rgba(242, 184, 33, 0.25);
+}
+
+50% {
+box-shadow: 0 8px 34px rgba(255, 207, 82, 0.72);
+}
+}
+
+.builder-pill {
+margin-left: auto;
+border: 1px solid var(--gold);
+border-radius: 999px;
+padding: 10px 18px;
+color: var(--gold-light);
+font-size: 15px;
+}
+
+.builder-pill span {
+margin-right: 9px;
+}
+
+.menu-button,
+.mobile-menu {
+display: none;
+}
+
+/* Getting Started dialog */
+
+.getting-started-modal[hidden] {
+display: none;
+}
+
+.getting-started-modal {
+position: fixed;
+inset: 0;
+z-index: 200;
+display: grid;
+place-items: center;
+padding: 24px;
+background: rgba(1, 5, 9, 0.8);
+backdrop-filter: blur(8px);
+}
+
+.getting-started-dialog {
+position: relative;
+width: min(680px, 100%);
+max-height: min(780px, calc(100vh - 48px));
+overflow: auto;
+padding: 34px 36px 30px;
+color: var(--text);
+background: linear-gradient(145deg, #101d2b, #07101a);
+border: 1px solid #556678;
+border-radius: 18px;
+box-shadow: 0 30px 100px rgba(0, 0, 0, 0.65);
+}
+
+.getting-started-dialog h2 {
+margin: 0 50px 8px 0;
+color: var(--gold-light);
+font-family: Georgia, "Times New Roman", serif;
+font-size: clamp(29px, 4vw, 40px);
+line-height: 1.1;
+}
+
+.getting-started-lead {
+margin: 0 0 20px;
+color: #edf1f5;
+font-size: 17px;
+line-height: 1.55;
+}
+
+.getting-started-steps {
+display: grid;
+gap: 13px;
+margin: 0;
+padding-left: 24px;
+color: #e5e9ee;
+font-size: 16px;
+line-height: 1.5;
+}
+
+.getting-started-steps li::marker {
+color: var(--gold-light);
+font-weight: 800;
+}
+
+.getting-started-note {
+margin: 22px 0 0;
+padding: 14px 16px;
+color: #d8dee6;
+background: rgba(255, 207, 82, 0.08);
+border-left: 3px solid var(--gold);
+border-radius: 0 8px 8px 0;
+font-size: 14px;
+line-height: 1.5;
+}
+
+.getting-started-actions {
+display: flex;
+justify-content: flex-end;
+margin-top: 24px;
+}
+
+.getting-started-primary {
+min-height: 46px;
+padding: 10px 22px;
+color: #11151a;
+background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+border: 0;
+border-radius: 9px;
+font-weight: 850;
+cursor: pointer;
+}
+
+.getting-started-primary:focus-visible,
+.modal-close:focus-visible {
+outline: 3px solid rgba(255, 207, 82, 0.42);
+outline-offset: 3px;
+}
+
+.modal-close {
+position: absolute;
+right: 18px;
+top: 18px;
+width: 40px;
+height: 40px;
+color: #fff;
+background: #1a2836;
+border: 1px solid #4c5c6d;
+border-radius: 50%;
+font-size: 25px;
+line-height: 1;
+cursor: pointer;
+}
+
+/* Hero */
+
+.hero {
+min-height: 220px;
+display: grid;
+place-items: center;
+text-align: center;
+position: relative;
+overflow: hidden;
+isolation: isolate;
+background:
+#07101a url("images/reelscout.jpg") center 47% / cover no-repeat;
+border-bottom: 1px solid #2b3948;
+}
+
+.hero::before {
+content: "";
+position: absolute;
+inset: 0;
+z-index: -1;
+background:
+linear-gradient(
+90deg,
+rgba(4, 8, 13, 0.82),
+rgba(5, 12, 20, 0.35) 48%,
+rgba(4, 8, 13, 0.78)
+),
+linear-gradient(
+0deg,
+rgba(4, 9, 15, 0.63),
+rgba(4, 9, 15, 0.18)
+);
+}
+
+.hero-content {
+padding: 36px 20px;
+}
+
+.hero h1 {
+margin: 0 0 13px;
+font-family: Georgia, "Times New Roman", serif;
+font-size: clamp(34px, 3.5vw, 54px);
+line-height: 1.06;
+letter-spacing: -0.025em;
+text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.hero p {
+margin: 0;
+color: #eef1f5;
+font-size: 17px;
+text-shadow: 0 2px 8px #000;
+}
+
+/* Main layout */
+
+.builder-shell {
+display: grid;
+grid-template-columns: minmax(340px, 31%) minmax(0, 1fr);
+gap: 18px;
+max-width: 1540px;
+margin: 0 auto;
+padding: 0 30px 38px;
+}
+
+.filter-panel,
+.prompt-panel {
+border: 1px solid var(--border);
+background:
+linear-gradient(
+145deg,
+rgba(12, 23, 35, 0.98),
+rgba(6, 13, 22, 0.99)
+);
+box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+}
+
+.filter-panel {
+padding: 15px 20px 21px;
+border-radius: 13px;
+}
+
+.prompt-panel {
+min-width: 0;
+padding: 34px 32px 20px;
+border-radius: 13px;
+display: flex;
+flex-direction: column;
+}
+
+.gold-box {
+color: #111;
+background:
+linear-gradient(
+110deg,
+#f7bd2d,
+#efa817 72%,
+#ffcb46
+);
+border: 1px solid #f1b729;
+border-radius: 8px;
+box-shadow:
+inset 0 1px rgba(255, 255, 255, 0.25),
+0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+.step-banner {
+min-height: 45px;
+padding: 8px 14px;
+display: flex;
+align-items: center;
+margin-bottom: 12px;
+font-family: Georgia, "Times New Roman", serif;
+font-size: 21px;
+font-weight: 700;
+line-height: 1.2;
+}
+
+/* Filters */
+
+.filter-group {
+border: 0;
+padding: 0;
+margin: 0 0 12px;
+}
+
+.filter-group legend,
+.field-label,
+.range-title {
+color: #f1f3f6;
+font-size: 13px;
+font-weight: 650;
+}
+
+.segmented-control {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+margin-top: 8px;
+}
+
+.segmented-control button {
+min-height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 7px;
+background: #09111b;
+border: 1px solid #425060;
+font-size: 12px;
+cursor: pointer;
+}
+
+.segmented-control button:first-child {
+border-radius: 7px 0 0 7px;
+}
+
+.segmented-control button:last-child {
+border-radius: 0 7px 7px 0;
+}
+
+.segmented-control button + button {
+border-left: 0;
+}
+
+.segmented-control button.active,
+.service-chips button.selected {
+color: #101216;
+background:
+linear-gradient(
+135deg,
+#f7c13d,
+#e8a817
+);
+border-color: #f2b925;
+font-weight: 750;
+box-shadow:
+inset 0 1px rgba(255, 255, 255, 0.25),
+0 7px 18px rgba(0, 0, 0, 0.16);
+}
+
+.service-chips {
+display: flex;
+gap: 7px;
+flex-wrap: wrap;
+margin-top: 8px;
+}
+
+.service-chips button {
+display: flex;
+align-items: center;
+gap: 7px;
+padding: 7px 10px;
+color: #f1f3f6;
+background: #08111b;
+border: 1px solid #3a4858;
+border-radius: 7px;
+font-size: 11px;
+cursor: pointer;
+}
+
+.service-mark {
+font-weight: 800;
+}
+
+.netflix {
+color: #e50914;
+font-size: 16px;
+}
+
+.prime {
+color: #33a8e2;
+}
+
+.max {
+color: #3789ff;
+}
+
+.disney {
+color: #c6d7ff;
+}
+
+.hulu {
+color: #28dc74;
+font-size: 16px;
+}
+
+.service-chips button.selected .service-mark {
+color: #101216;
+}
+
+.more-services {
+display: none;
+padding: 9px;
+max-height: 145px;
+overflow: auto;
+background: #07101a;
+border-radius: 8px;
+}
+
+.more-services.open {
+display: flex;
+}
+
+.field-label {
+display: grid;
+gap: 6px;
+margin: 0 0 10px;
+}
+
+select,
+.conditional-input {
+width: 100%;
+height: 34px;
+padding: 0 10px;
+border-radius: 7px;
+outline: none;
+font-size: 12px;
+}
+
+select {
+color: #101216;
+background-color: var(--gold);
+background-image:
+linear-gradient(
+135deg,
+#f7c13d,
+#e8a817
+);
+border: 1px solid #f2b925;
+font-weight: 750;
+box-shadow:
+inset 0 1px rgba(255, 255, 255, 0.25),
+0 7px 18px rgba(0, 0, 0, 0.12);
+cursor: pointer;
+}
+
+select option {
+color: #f7f8fb;
+background: #101925;
+font-weight: 500;
+}
+
+.conditional-input {
+display: none;
+margin: -3px 0 10px;
+color: #f1f3f6;
+background: #09121c;
+border: 1px solid #3b4958;
+}
+
+.conditional-input.visible {
+display: block;
+}
+
+select:focus,
+input:focus,
+button:focus-visible,
+a:focus-visible {
+outline: 2px solid var(--gold);
+outline-offset: 2px;
+}
+
+/* Range controls */
+
+.range-group {
+margin: 3px 0 11px;
+}
+
+.range-title {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.range-title output {
+font-size: 12px;
+font-weight: 500;
+}
+
+.dual-range {
+position: relative;
+height: 27px;
+margin-top: 3px;
+}
+
+.dual-range-track {
+position: absolute;
+left: 2px;
+right: 2px;
+top: 11px;
+height: 4px;
+background: #47515b;
+border-radius: 99px;
+}
+
+.dual-range-fill {
+position: absolute;
+top: 0;
+bottom: 0;
+background: var(--gold);
+border-radius: 99px;
+}
+
+.dual-range input[type="range"] {
+appearance: none;
+-webkit-appearance: none;
+position: absolute;
+inset: 0;
+width: 100%;
+height: 27px;
+margin: 0;
+background: transparent;
+pointer-events: none;
+}
+
+.dual-range input[type="range"]::-webkit-slider-runnable-track {
+height: 4px;
+background: transparent;
+}
+
+.dual-range input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+margin-top: -7px;
+background: #d99b19;
+border: 1px solid white;
+border-radius: 50%;
+box-shadow: 0 0 0 2px #14202c;
+pointer-events: auto;
+cursor: grab;
+}
+
+.dual-range input[type="range"]::-moz-range-track {
+height: 4px;
+background: transparent;
+}
+
+.dual-range input[type="range"]::-moz-range-thumb {
+width: 18px;
+height: 18px;
+background: #d99b19;
+border: 1px solid white;
+border-radius: 50%;
+box-shadow: 0 0 0 2px #14202c;
+pointer-events: auto;
+cursor: grab;
+}
+
+.range-ends {
+display: flex;
+justify-content: space-between;
+margin-top: -3px;
+color: var(--muted);
+font-size: 10px;
+}
+
+.rating-range input[type="range"] {
+width: 100%;
+height: 17px;
+margin: 3px 0 0;
+accent-color: var(--gold);
+}
+
+/* Search summary */
+
+.prompt-panel h2 {
+margin: 0 0 24px;
+font-family: Georgia, "Times New Roman", serif;
+font-size: 29px;
+line-height: 1.2;
+}
+
+.prompt-box {
+flex: 1;
+min-height: 350px;
+padding: 25px 30px;
+background:
+linear-gradient(
+145deg,
+rgba(10, 21, 33, 0.92),
+rgba(7, 15, 24, 0.9)
+);
+border: 1px solid #455364;
+border-radius: 10px;
+font-size: clamp(19px, 1.75vw, 28px);
+line-height: 1.48;
+}
+
+.prompt-box p {
+margin: 0;
+}
+
+.summary-callout {
+margin: 18px 0 0;
+padding: 16px 20px;
+color: var(--gold-light);
+background: rgba(242, 184, 33, 0.1);
+border: 1px solid rgba(242, 184, 33, 0.72);
+border-radius: 8px;
+font-size: clamp(16px, 1.25vw, 20px);
+font-weight: 800;
+text-align: center;
+}
+
+.steps-grid {
+display: grid;
+grid-template-columns: 1fr 1.08fr;
+gap: 24px;
+margin-top: 18px;
+}
+
+.step-action,
+.step-instruction {
+min-height: 138px;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+font-size: clamp(17px, 1.45vw, 25px);
+line-height: 1.32;
+}
+
+.step-action {
+cursor: pointer;
+font-weight: 540;
+}
+
+.step-action:hover {
+filter: brightness(1.06);
+transform: translateY(-2px);
+}
+
+.copy-icon {
+width: 39px;
+height: 38px;
+position: relative;
+margin-right: 18px;
+flex: 0 0 auto;
+}
+
+.copy-icon i {
+position: absolute;
+width: 25px;
+height: 28px;
+border: 2px solid #19140a;
+border-radius: 4px;
+}
+
+.copy-icon i:first-child {
+left: 0;
+top: 0;
+}
+
+.copy-icon i:last-child {
+right: 0;
+bottom: 0;
+background: rgba(255, 255, 255, 0.05);
+}
+
+.copy-status {
+min-height: 29px;
+padding-top: 12px;
+color: var(--muted);
+font-size: 12px;
+text-align: center;
+}
+
+.copy-status.success {
+color: #ffdc75;
+}
+
+.copy-status.error {
+color: #ff9c8e;
+}
+
+/* Tablet */
+
+@media (max-width: 1080px) {
+.site-header nav {
+margin-left: 50px;
+gap: 30px;
+}
+
+.builder-shell {
+grid-template-columns: 330px minmax(0, 1fr);
+padding-inline: 18px;
+}
+
+.prompt-panel {
+padding-inline: 22px;
+}
+
+.prompt-box {
+padding: 22px;
+font-size: 19px;
+}
+
+.steps-grid {
+gap: 14px;
+}
+
+.step-action,
+.step-instruction {
+font-size: 17px;
+}
+}
+
+/* Mobile */
+
+@media (max-width: 760px) {
+.site-header {
+height: 70px;
+padding: 0 20px;
+}
+
+.brand {
+font-size: 27px;
+}
+
+.brand-mark {
+width: 37px;
+height: 37px;
+}
+
+.site-header nav,
+.builder-pill {
+display: none;
+}
+
+.menu-button {
+display: grid;
+gap: 5px;
+margin-left: auto;
+padding: 10px 3px;
+background: transparent;
+border: 0;
+cursor: pointer;
+}
+
+.menu-button span {
+width: 30px;
+height: 3px;
+background: #f4f5f7;
+border-radius: 3px;
+}
+
+.mobile-menu {
+position: absolute;
+right: 16px;
+top: 63px;
+min-width: 190px;
+padding: 8px;
+background: #101925;
+border: 1px solid #3a4858;
+border-radius: 10px;
+box-shadow: 0 20px 60px #000;
+}
+
+.mobile-menu.open {
+display: grid;
+}
+
+.mobile-menu .getting-started-button {
+width: 100%;
+margin: 4px 0;
+}
+
+.getting-started-dialog {
+padding: 30px 23px 24px;
+}
+
+.getting-started-lead,
+.getting-started-steps {
+font-size: 15px;
+}
+
+.hero {
+min-height: 286px;
+background-position: center;
+}
+
+.hero-content {
+padding: 36px 24px;
+}
+
+.hero h1 {
+font-size: clamp(34px, 10vw, 46px);
+line-height: 1.12;
+}
+
+.hero p {
+font-size: 17px;
+line-height: 1.45;
+}
+
+.builder-shell {
+display: block;
+padding: 14px 16px 30px;
+}
+
+.filter-panel,
+.prompt-panel {
+border-radius: 12px;
+}
+
+.filter-panel {
+padding: 17px 17px 19px;
+}
+
+.step-banner {
+min-height: 50px;
+font-size: 22px;
+}
+
+.filter-group legend,
+.field-label,
+.range-title {
+font-size: 15px;
+}
+
+.segmented-control button {
+min-height: 45px;
+font-size: 14px;
+}
+
+.service-chips button {
+min-height: 42px;
+padding: 8px 12px;
+font-size: 13px;
+}
+
+select,
+.conditional-input {
+height: 45px;
+font-size: 14px;
+}
+
+.dual-range {
+height: 35px;
+}
+
+.dual-range-track {
+top: 16px;
+}
+
+.dual-range input[type="range"] {
+height: 35px;
+}
+
+.dual-range input[type="range"]::-webkit-slider-thumb {
+width: 23px;
+height: 23px;
+margin-top: -10px;
+}
+
+.dual-range input[type="range"]::-moz-range-thumb {
+width: 23px;
+height: 23px;
+}
+
+.rating-range input[type="range"] {
+height: 24px;
+}
+
+.prompt-panel {
+margin-top: 14px;
+padding: 22px 18px 14px;
+}
+
+.prompt-panel h2 {
+margin-bottom: 15px;
+font-size: 26px;
+}
+
+.prompt-box {
+min-height: 0;
+padding: 20px 18px;
+font-size: 17px;
+line-height: 1.5;
+}
+
+.summary-callout {
+margin-top: 24px;
+padding: 14px;
+font-size: 16px;
+}
+
+.steps-grid {
+grid-template-columns: 1fr;
+gap: 10px;
+margin-top: 16px;
+}
+
+.step-action,
+.step-instruction {
+min-height: 86px;
+font-size: 18px;
+}
+
+.desktop-break {
+display: none;
+}
+
+.copy-status {
+font-size: 11px;
+}
+
+.range-ends {
+font-size: 11px;
+}
+}
+
+@media (max-width: 430px) {
+.brand {
+font-size: 25px;
+}
+
+.hero {
+min-height: 300px;
+}
+
+.hero h1 {
+font-size: 36px;
+}
+
+.hero p {
+font-size: 16px;
+}
+
+.segmented-control button {
+gap: 4px;
+font-size: 12px;
+}
+
+.service-chips {
+display: grid;
+grid-template-columns: 1fr 1fr;
+}
+
+.service-chips button {
+justify-content: flex-start;
+}
+
+.more-services.open {
+display: grid;
+}
+
+.prompt-box {
+font-size: 16px;
+}
+
+.step-action,
+.step-instruction {
+font-size: 17px;
+}
+
+.copy-icon {
+margin-right: 12px;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+scroll-behavior: auto !important;
+transition-duration: 0.01ms !important;
+}
+}
+</style>
 </head>
 
 <body>
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="ReelScout home">
-      <span class="brand-mark" aria-hidden="true">
-        <span class="film-dot dot-one"></span>
-        <span class="film-dot dot-two"></span>
-        <span class="film-dot dot-three"></span>
-        <span class="film-dot dot-four"></span>
-        <span class="film-center"></span>
-      </span>
-
-      <span>ReelScout</span>
-    </a>
-
-    <nav aria-label="Primary navigation">
-      <a href="#builder">Discover</a>
-      <a href="#steps">How It Works</a>
-    </nav>
-
-    <div class="builder-pill">
-      <span aria-hidden="true">✦</span>
-      Prompt Builder
-    </div>
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open menu"
-      aria-expanded="false"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="#builder">Discover</a>
-      <a href="#steps">How It Works</a>
-    </div>
-  </header>
-
-  <main>
-    <section id="top" class="hero">
-      <div class="hero-content">
-        <h1>Movie Streaming Search – Powered by IMDb</h1>
-
-        <p>
-          Build detailed search request, then let ChatGPT, Gemini, etc.
-          investigate IMDb and streaming availability.
-        </p>
-      </div>
-    </section>
-
-    <div id="builder" class="builder-shell">
-      <aside class="filter-panel" aria-label="Search preferences">
-        <div class="step-banner gold-box">
-          Step 1- Build Your Search Below
-        </div>
-
-        <fieldset class="filter-group">
-          <legend>What do you want to watch?</legend>
-
-          <div class="segmented-control" id="contentType">
-            <button type="button" class="active" data-value="Movies">
-              <span aria-hidden="true">▤</span>
-              Movies
-            </button>
-
-            <button type="button" data-value="TV Series">
-              <span aria-hidden="true">▣</span>
-              TV Series
-            </button>
-
-            <button type="button" data-value="Both">
-              <span aria-hidden="true">▦</span>
-              Both
-            </button>
-          </div>
-        </fieldset>
-
-        <fieldset class="filter-group">
-          <legend>Select preferred streaming sources</legend>
-
-          <div class="service-chips" id="primaryServices">
-            <button
-              type="button"
-              class="selected"
-              data-service="Netflix"
-              aria-pressed="true"
-            >
-              <span class="service-mark netflix">N</span>
-              Netflix
-            </button>
-
-            <button
-              type="button"
-              class="selected"
-              data-service="Prime Video"
-              aria-pressed="true"
-            >
-              <span class="service-mark prime">prime</span>
-              Prime Video
-            </button>
-
-            <button
-              type="button"
-              class="selected"
-              data-service="Max"
-              aria-pressed="true"
-            >
-              <span class="service-mark max">max</span>
-              Max
-            </button>
-
-            <button
-              type="button"
-              data-service="Disney+"
-              aria-pressed="false"
-            >
-              <span class="service-mark disney">D+</span>
-              Disney+
-            </button>
-
-            <button
-              type="button"
-              data-service="Hulu"
-              aria-pressed="false"
-            >
-              <span class="service-mark hulu">h</span>
-              Hulu
-            </button>
-
-            <button
-              type="button"
-              id="moreButton"
-              aria-expanded="false"
-            >
-              <span class="service-mark">•••</span>
-              More
-            </button>
-          </div>
-
-          <div class="service-chips more-services" id="moreServices">
-            <button type="button" data-service="Apple TV" aria-pressed="false">
-              Apple TV
-            </button>
-
-            <button
-              type="button"
-              class="selected"
-              data-service="Peacock"
-              aria-pressed="true"
-            >
-              Peacock
-            </button>
-
-            <button
-              type="button"
-              class="selected"
-              data-service="Paramount+"
-              aria-pressed="true"
-            >
-              Paramount+
-            </button>
-
-            <button type="button" data-service="Starz" aria-pressed="false">
-              Starz
-            </button>
-
-            <button type="button" data-service="AMC+" aria-pressed="false">
-              AMC+
-            </button>
-
-            <button type="button" data-service="Discovery+" aria-pressed="false">
-              Discovery+
-            </button>
-
-            <button type="button" data-service="Crunchyroll" aria-pressed="false">
-              Crunchyroll
-            </button>
-
-            <button type="button" data-service="BritBox" aria-pressed="false">
-              BritBox
-            </button>
-
-            <button type="button" data-service="BET+" aria-pressed="false">
-              BET+
-            </button>
-
-            <button type="button" data-service="Hallmark+" aria-pressed="false">
-              Hallmark+
-            </button>
-          </div>
-        </fieldset>
-
-        <label class="field-label">
-          How would you like to watch?
-
-          <select id="watchType">
-            <option selected>Included with subscription</option>
-            <option>Rent or buy</option>
-            <option>Both</option>
-          </select>
-        </label>
-
-        <label class="field-label">
-          Mood &amp; Story
-
-          <select id="mood">
-            <option>All moods</option>
-            <option selected>Action</option>
-            <option>Adult</option>
-            <option>Adventure</option>
-            <option>Comedy</option>
-            <option>Crime</option>
-            <option>Drama</option>
-            <option>Fantasy</option>
-            <option>Horror</option>
-            <option>Music</option>
-            <option>Mystery</option>
-            <option>Romance</option>
-            <option>Sci-Fi</option>
-            <option>Thriller</option>
-          </select>
-        </label>
-
-        <label class="field-label">
-          Format &amp; Topic
-
-          <select id="topic">
-            <option selected>All formats &amp; topics</option>
-            <option>Animation</option>
-            <option>Biography</option>
-            <option>Documentary</option>
-            <option>Family</option>
-            <option>Film-Noir</option>
-            <option>Game-Show</option>
-            <option>History</option>
-            <option>Musical</option>
-            <option>News</option>
-            <option>Reality-TV</option>
-            <option>Short</option>
-            <option>Sport</option>
-            <option>Talk-Show</option>
-            <option>War</option>
-            <option>Western</option>
-          </select>
-        </label>
-
-        <label class="field-label">
-          Language
-
-          <select id="language">
-            <option selected>English</option>
-            <option>Any language</option>
-            <option>Custom language</option>
-          </select>
-        </label>
-
-        <label for="customLanguage" class="sr-only">
-          Enter a custom language
-        </label>
-
-        <input
-          class="conditional-input"
-          id="customLanguage"
-          type="text"
-          placeholder="Enter a language"
-        >
-
-        <div class="range-group">
-          <div class="range-title">
-            <span>Release years</span>
-            <output id="yearOutput">2024–2026</output>
-          </div>
-
-          <div class="dual-range">
-            <div class="dual-range-track">
-              <span class="dual-range-fill" id="yearFill"></span>
-            </div>
-
-            <input
-              id="yearStart"
-              aria-label="Starting release year"
-              type="range"
-              min="2000"
-              max="2026"
-              value="2024"
-            >
-
-            <input
-              id="yearEnd"
-              aria-label="Ending release year"
-              type="range"
-              min="2000"
-              max="2026"
-              value="2026"
-            >
-          </div>
-
-          <div class="range-ends">
-            <span>2000</span>
-            <span>2026</span>
-          </div>
-        </div>
-
-        <div class="range-group rating-range">
-          <div class="range-title">
-            <span>Minimum IMDb rating</span>
-            <output id="ratingOutput">7.0+</output>
-          </div>
-
-          <input
-            id="rating"
-            aria-label="Minimum IMDb rating"
-            type="range"
-            min="5"
-            max="9"
-            step="0.5"
-            value="7"
-          >
-
-          <div class="range-ends">
-            <span>5.0</span>
-            <span>9.0+</span>
-          </div>
-        </div>
-
-        <label class="field-label">
-          Choose Your Sort
-
-          <select id="sort">
-            <option value="alphabetical" selected>
-              Alphabetical by title
-            </option>
-
-            <option value="rating">
-              IMDb rating: high to low
-            </option>
-
-            <option value="newest">
-              Date: newest to oldest
-            </option>
-
-            <option value="oldest">
-              Date: oldest to newest
-            </option>
-          </select>
-        </label>
-
-        <label class="field-label">
-          Looking for something specific?
-
-          <select id="specificType">
-            <option>None</option>
-            <option>Actor/actress</option>
-            <option>Director</option>
-            <option>Custom request</option>
-            <option>Override the year range</option>
-          </select>
-        </label>
-
-        <label for="specificValue" class="sr-only">
-          Additional search detail
-        </label>
-
-        <input
-          class="conditional-input"
-          id="specificValue"
-          type="text"
-        >
-      </aside>
-
-      <section
-        class="prompt-panel"
-        aria-label="Generated search prompt"
-      >
-        <h2>Your Search Summary</h2>
-
-        <div class="prompt-box" aria-live="polite">
-          <p id="searchSummary"></p>
-        </div>
-
-        <p class="summary-callout">
-          Click on Step 2 to create your prompt
-        </p>
-
-        <div id="steps" class="steps-grid">
-          <button
-            class="step-action gold-box"
-            id="copyPrompt"
-            type="button"
-          >
-            <span class="copy-icon" aria-hidden="true">
-              <i></i>
-              <i></i>
-            </span>
-
-            <span>
-              Step 2 – Click here to
-              <br class="desktop-break">
-              Copy Prompt.
-            </span>
-          </button>
-
-          <div class="step-instruction gold-box">
-            <span>
-              Step 3 – Open ChatGPT,
-              <br>
-              Gemini, etc. and paste
-              <br>
-              prompt you just copied.
-            </span>
-          </div>
-        </div>
-
-        <div
-          class="copy-status"
-          id="copyStatus"
-          role="status"
-        >
-          Your prompt updates automatically as you change the filters.
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <script>
-    const state = {
-      contentType: "Movies",
-      services: [
-        "Netflix",
-        "Prime Video",
-        "Max",
-        "Peacock",
-        "Paramount+"
-      ],
-      watchType: "Included with subscription",
-      mood: "Action",
-      topic: "All formats & topics",
-      language: "English",
-      customLanguage: "",
-      yearStart: 2024,
-      yearEnd: 2026,
-      rating: 7,
-      sort: "alphabetical",
-      specificType: "None",
-      specificValue: ""
-    };
-
-    const $ = (id) => document.getElementById(id);
-
-    function naturalList(items) {
-      if (!items.length) {
-        return "any streaming service";
-      }
-
-      if (items.length === 1) {
-        return items[0];
-      }
-
-      return (
-        items.slice(0, -1).join(", ") +
-        " or " +
-        items[items.length - 1]
-      );
-    }
-
-    function getSummaryParts() {
-      const subject =
-        state.contentType === "Movies"
-          ? "movies"
-          : state.contentType === "TV Series"
-            ? "TV series"
-            : "movies and TV series";
-
-      const yearText =
-        state.yearStart === state.yearEnd
-          ? "released in " + state.yearStart
-          : "released from " +
-            state.yearStart +
-            " through " +
-            state.yearEnd;
-
-      const categories = [
-        state.mood !== "All moods" ? state.mood : "",
-        state.topic !== "All formats & topics"
-          ? state.topic
-          : ""
-      ].filter(Boolean);
-
-      const categoryText = categories.length
-        ? ", in the " +
-          (categories.length > 1
-            ? "categories"
-            : "category") +
-          " of " +
-          categories.join(" and ")
-        : "";
-
-      let watchText;
-
-      if (state.watchType === "Included with subscription") {
-        watchText =
-          "included with a subscription, without an additional rental or purchase charge";
-      } else if (state.watchType === "Rent or buy") {
-        watchText = "available to rent or buy";
-      } else {
-        watchText =
-          "available through a subscription, rental or purchase";
-      }
-
-      let languageText = "";
-
-      if (state.language === "English") {
-        languageText =
-          " The title language must be English.";
-      }
-
-      if (
-        state.language === "Custom language" &&
-        state.customLanguage.trim()
-      ) {
-        languageText =
-          " The title language must be " +
-          state.customLanguage.trim() +
-          ".";
-      }
-
-      let specificText = "";
-
-      if (
-        state.specificType !== "None" &&
-        state.specificValue.trim()
-      ) {
-        if (state.specificType === "Actor/actress") {
-          specificText =
-            " Include titles featuring " +
-            state.specificValue.trim() +
-            ".";
-        } else if (state.specificType === "Director") {
-          specificText =
-            " Include titles directed by " +
-            state.specificValue.trim() +
-            ".";
-        } else if (
-          state.specificType === "Override the year range"
-        ) {
-          specificText =
-            " Override the selected year range and use " +
-            state.specificValue.trim() +
-            " instead.";
-        } else {
-          specificText =
-            " Also follow this request: " +
-            state.specificValue.trim() +
-            ".";
-        }
-      }
-
-      const summary =
-        "I would like you to investigate the IMDb website to identify " +
-        subject +
-        " rated " +
-        state.rating.toFixed(1) +
-        " or higher, " +
-        yearText +
-        categoryText +
-        ". Show titles " +
-        watchText +
-        " on " +
-        naturalList(state.services) +
-        " in the United States." +
-        languageText +
-        specificText;
-
-      return {
-        summary: summary,
-        subject: subject,
-        watchText: watchText
-      };
-    }
-
-    function buildFullPrompt() {
-      const parts = getSummaryParts();
-
-      let sortText;
-
-      if (state.sort === "alphabetical") {
-        sortText = "alphabetically by title";
-      } else if (state.sort === "rating") {
-        sortText =
-          "by IMDb rating from highest to lowest";
-      } else if (state.sort === "newest") {
-        sortText = "from newest to oldest";
-      } else {
-        sortText = "from oldest to newest";
-      }
-
-      const hiddenBoilerplate = `
+<header class="site-header">
+<a class="brand" href="#top" aria-label="ReelScout home">
+<span class="brand-mark" aria-hidden="true">
+<span class="film-dot dot-one"></span>
+<span class="film-dot dot-two"></span>
+<span class="film-dot dot-three"></span>
+<span class="film-dot dot-four"></span>
+<span class="film-center"></span>
+</span>
+
+<span>ReelScout</span>
+</a>
+
+<nav aria-label="Primary navigation">
+<button class="getting-started-button is-new" id="openGettingStarted" type="button">
+<span class="start-badge">NEW? START HERE</span>
+Getting Started
+</button>
+</nav>
+
+<div class="builder-pill">
+<span aria-hidden="true">✦</span>
+Prompt Builder
+</div>
+
+<button
+class="menu-button"
+id="menuButton"
+type="button"
+aria-label="Open menu"
+aria-expanded="false"
+>
+<span></span>
+<span></span>
+<span></span>
+</button>
+
+<div class="mobile-menu" id="mobileMenu">
+<button class="getting-started-button" id="openGettingStartedMobile" type="button">
+Getting Started
+</button>
+</div>
+</header>
+
+<div class="getting-started-modal" id="gettingStartedModal" hidden>
+<section
+class="getting-started-dialog"
+role="dialog"
+aria-modal="true"
+aria-labelledby="gettingStartedTitle"
+aria-describedby="gettingStartedDescription"
+>
+<button
+class="modal-close"
+id="closeGettingStarted"
+type="button"
+aria-label="Close Getting Started"
+>
+×
+</button>
+
+<h2 id="gettingStartedTitle">Getting Started</h2>
+
+<p class="getting-started-lead" id="gettingStartedDescription">
+This website creates a detailed search prompt for your favorite AI assistant.
+</p>
+
+<ol class="getting-started-steps">
+<li>You will need an active AI account, such as ChatGPT or Gemini.</li>
+
+<li>
+In the left panel, choose what you want to watch and adjust the
+search options. Some choices are already selected; click
+<strong>More</strong> to see additional streaming services.
+</li>
+
+<li>
+Review <strong>Your Search Summary</strong> in the right panel,
+which updates automatically.
+</li>
+
+<li>
+Click <strong>Step 2</strong> to copy the complete prompt,
+including detailed instructions added automatically.
+</li>
+
+<li>
+Open ChatGPT, Gemini, Claude, Grok, or another AI assistant.
+Start a new chat, paste the prompt, and send it.
+</li>
+</ol>
+
+<p class="getting-started-note">
+Results are designed for U.S. streaming services. Because availability
+changes, verify titles before renting or purchasing.
+</p>
+
+<div class="getting-started-actions">
+<button class="getting-started-primary" id="beginSearch" type="button">
+Let’s Get Started
+</button>
+</div>
+</section>
+</div>
+
+<main>
+<section id="top" class="hero">
+<div class="hero-content">
+<h1>Movie Streaming Search – Powered by IMDb</h1>
+
+<p>
+Build detailed search request, then let ChatGPT, Gemini, etc.
+investigate IMDb and streaming availability.
+</p>
+</div>
+</section>
+
+<div id="builder" class="builder-shell">
+<aside class="filter-panel" aria-label="Search preferences">
+<div class="step-banner gold-box">
+Step 1- Build Your Search Below
+</div>
+
+<fieldset class="filter-group">
+<legend>What do you want to watch?</legend>
+
+<div class="segmented-control" id="contentType">
+<button type="button" class="active" data-value="Movies">
+<span aria-hidden="true">▤</span>
+Movies
+</button>
+
+<button type="button" data-value="TV Series">
+<span aria-hidden="true">▣</span>
+TV Series
+</button>
+
+<button type="button" data-value="Both">
+<span aria-hidden="true">▦</span>
+Both
+</button>
+</div>
+</fieldset>
+
+<fieldset class="filter-group">
+<legend>Select preferred streaming sources</legend>
+
+<div class="service-chips" id="primaryServices">
+<button
+type="button"
+class="selected"
+data-service="Netflix"
+aria-pressed="true"
+>
+<span class="service-mark netflix">N</span>
+Netflix
+</button>
+
+<button
+type="button"
+class="selected"
+data-service="Prime Video"
+aria-pressed="true"
+>
+<span class="service-mark prime">prime</span>
+Prime Video
+</button>
+
+<button
+type="button"
+class="selected"
+data-service="Max"
+aria-pressed="true"
+>
+<span class="service-mark max">max</span>
+Max
+</button>
+
+<button
+type="button"
+data-service="Disney+"
+aria-pressed="false"
+>
+<span class="service-mark disney">D+</span>
+Disney+
+</button>
+
+<button
+type="button"
+data-service="Hulu"
+aria-pressed="false"
+>
+<span class="service-mark hulu">h</span>
+Hulu
+</button>
+
+<button
+type="button"
+id="moreButton"
+aria-expanded="false"
+>
+<span class="service-mark">•••</span>
+More
+</button>
+</div>
+
+<div class="service-chips more-services" id="moreServices">
+<button type="button" data-service="Apple TV" aria-pressed="false">
+Apple TV
+</button>
+
+<button
+type="button"
+class="selected"
+data-service="Peacock"
+aria-pressed="true"
+>
+Peacock
+</button>
+
+<button
+type="button"
+class="selected"
+data-service="Paramount+"
+aria-pressed="true"
+>
+Paramount+
+</button>
+
+<button type="button" data-service="Starz" aria-pressed="false">
+Starz
+</button>
+
+<button type="button" data-service="AMC+" aria-pressed="false">
+AMC+
+</button>
+
+<button type="button" data-service="Discovery+" aria-pressed="false">
+Discovery+
+</button>
+
+<button type="button" data-service="Crunchyroll" aria-pressed="false">
+Crunchyroll
+</button>
+
+<button type="button" data-service="BritBox" aria-pressed="false">
+BritBox
+</button>
+
+<button type="button" data-service="BET+" aria-pressed="false">
+BET+
+</button>
+
+<button type="button" data-service="Hallmark+" aria-pressed="false">
+Hallmark+
+</button>
+</div>
+</fieldset>
+
+<label class="field-label">
+How would you like to watch?
+
+<select id="watchType">
+<option selected>Included with subscription</option>
+<option>Rent or buy</option>
+<option>Both</option>
+</select>
+</label>
+
+<label class="field-label">
+Mood &amp; Story
+
+<select id="mood">
+<option>All moods</option>
+<option selected>Action</option>
+<option>Adult</option>
+<option>Adventure</option>
+<option>Comedy</option>
+<option>Crime</option>
+<option>Drama</option>
+<option>Fantasy</option>
+<option>Horror</option>
+<option>Music</option>
+<option>Mystery</option>
+<option>Romance</option>
+<option>Sci-Fi</option>
+<option>Thriller</option>
+</select>
+</label>
+
+<label class="field-label">
+Format &amp; Topic
+
+<select id="topic">
+<option selected>All formats &amp; topics</option>
+<option>Animation</option>
+<option>Biography</option>
+<option>Documentary</option>
+<option>Family</option>
+<option>Film-Noir</option>
+<option>Game-Show</option>
+<option>History</option>
+<option>Musical</option>
+<option>News</option>
+<option>Reality-TV</option>
+<option>Short</option>
+<option>Sport</option>
+<option>Talk-Show</option>
+<option>War</option>
+<option>Western</option>
+</select>
+</label>
+
+<label class="field-label">
+Language
+
+<select id="language">
+<option selected>English</option>
+<option>Any language</option>
+<option>Custom language</option>
+</select>
+</label>
+
+<label for="customLanguage" class="sr-only">
+Enter a custom language
+</label>
+
+<input
+class="conditional-input"
+id="customLanguage"
+type="text"
+placeholder="Enter a language"
+>
+
+<div class="range-group">
+<div class="range-title">
+<span>Release years</span>
+<output id="yearOutput">2024–2026</output>
+</div>
+
+<div class="dual-range">
+<div class="dual-range-track">
+<span class="dual-range-fill" id="yearFill"></span>
+</div>
+
+<input
+id="yearStart"
+aria-label="Starting release year"
+type="range"
+min="2000"
+max="2026"
+value="2024"
+>
+
+<input
+id="yearEnd"
+aria-label="Ending release year"
+type="range"
+min="2000"
+max="2026"
+value="2026"
+>
+</div>
+
+<div class="range-ends">
+<span>2000</span>
+<span>2026</span>
+</div>
+</div>
+
+<div class="range-group rating-range">
+<div class="range-title">
+<span>Minimum IMDb rating</span>
+<output id="ratingOutput">7.0+</output>
+</div>
+
+<input
+id="rating"
+aria-label="Minimum IMDb rating"
+type="range"
+min="5"
+max="9"
+step="0.5"
+value="7"
+>
+
+<div class="range-ends">
+<span>5.0</span>
+<span>9.0+</span>
+</div>
+</div>
+
+<label class="field-label">
+Choose Your Sort
+
+<select id="sort">
+<option value="alphabetical" selected>
+Alphabetical by title
+</option>
+
+<option value="rating">
+IMDb rating: high to low
+</option>
+
+<option value="newest">
+Date: newest to oldest
+</option>
+
+<option value="oldest">
+Date: oldest to newest
+</option>
+</select>
+</label>
+
+<label class="field-label">
+Looking for something specific?
+
+<select id="specificType">
+<option>None</option>
+<option>Actor/actress</option>
+<option>Director</option>
+<option>Custom request</option>
+<option>Override the year range</option>
+</select>
+</label>
+
+<label for="specificValue" class="sr-only">
+Additional search detail
+</label>
+
+<input
+class="conditional-input"
+id="specificValue"
+type="text"
+>
+</aside>
+
+<section
+class="prompt-panel"
+aria-label="Generated search prompt"
+>
+<h2>Your Search Summary</h2>
+
+<div class="prompt-box" aria-live="polite">
+<p id="searchSummary"></p>
+</div>
+
+<p class="summary-callout">
+Click on Step 2 to create your prompt
+</p>
+
+<div id="steps" class="steps-grid">
+<button
+class="step-action gold-box"
+id="copyPrompt"
+type="button"
+>
+<span class="copy-icon" aria-hidden="true">
+<i></i>
+<i></i>
+</span>
+
+<span>
+Step 2 – Click here to
+<br class="desktop-break">
+Copy Prompt.
+</span>
+</button>
+
+<div class="step-instruction gold-box">
+<span>
+Step 3 – Open ChatGPT,
+<br>
+Gemini, etc. and paste
+<br>
+prompt you just copied.
+</span>
+</div>
+</div>
+
+<div
+class="copy-status"
+id="copyStatus"
+role="status"
+>
+Your prompt updates automatically as you change the filters.
+</div>
+</section>
+</div>
+</main>
+
+<script>
+const state = {
+contentType: "Movies",
+services: [
+"Netflix",
+"Prime Video",
+"Max",
+"Peacock",
+"Paramount+"
+],
+watchType: "Included with subscription",
+mood: "Action",
+topic: "All formats & topics",
+language: "English",
+customLanguage: "",
+yearStart: 2024,
+yearEnd: 2026,
+rating: 7,
+sort: "alphabetical",
+specificType: "None",
+specificValue: ""
+};
+
+const $ = (id) => document.getElementById(id);
+
+function naturalList(items) {
+if (!items.length) {
+return "any streaming service";
+}
+
+if (items.length === 1) {
+return items[0];
+}
+
+return (
+items.slice(0, -1).join(", ") +
+" or " +
+items[items.length - 1]
+);
+}
+
+function getSummaryParts() {
+const subject =
+state.contentType === "Movies"
+? "movies"
+: state.contentType === "TV Series"
+? "TV series"
+: "movies and TV series";
+
+const yearText =
+state.yearStart === state.yearEnd
+? "released in " + state.yearStart
+: "released from " +
+state.yearStart +
+" through " +
+state.yearEnd;
+
+const categories = [
+state.mood !== "All moods" ? state.mood : "",
+state.topic !== "All formats & topics"
+? state.topic
+: ""
+].filter(Boolean);
+
+const categoryText = categories.length
+? ", in the " +
+(categories.length > 1
+? "categories"
+: "category") +
+" of " +
+categories.join(" and ")
+: "";
+
+let watchText;
+
+if (state.watchType === "Included with subscription") {
+watchText =
+"included with a subscription, without an additional rental or purchase charge";
+} else if (state.watchType === "Rent or buy") {
+watchText = "available to rent or buy";
+} else {
+watchText =
+"available through a subscription, rental or purchase";
+}
+
+let languageText = "";
+
+if (state.language === "English") {
+languageText =
+" The title language must be English.";
+}
+
+if (
+state.language === "Custom language" &&
+state.customLanguage.trim()
+) {
+languageText =
+" The title language must be " +
+state.customLanguage.trim() +
+".";
+}
+
+let specificText = "";
+
+if (
+state.specificType !== "None" &&
+state.specificValue.trim()
+) {
+if (state.specificType === "Actor/actress") {
+specificText =
+" Include titles featuring " +
+state.specificValue.trim() +
+".";
+} else if (state.specificType === "Director") {
+specificText =
+" Include titles directed by " +
+state.specificValue.trim() +
+".";
+} else if (
+state.specificType === "Override the year range"
+) {
+specificText =
+" Override the selected year range and use " +
+state.specificValue.trim() +
+" instead.";
+} else {
+specificText =
+" Also follow this request: " +
+state.specificValue.trim() +
+".";
+}
+}
+
+const summary =
+"I would like you to investigate the IMDb website to identify " +
+subject +
+" rated " +
+state.rating.toFixed(1) +
+" or higher, " +
+yearText +
+categoryText +
+". Show titles " +
+watchText +
+" on " +
+naturalList(state.services) +
+" in the United States." +
+languageText +
+specificText;
+
+return {
+summary: summary,
+subject: subject,
+watchText: watchText
+};
+}
+
+function buildFullPrompt() {
+const parts = getSummaryParts();
+
+let sortText;
+
+if (state.sort === "alphabetical") {
+sortText = "alphabetically by title";
+} else if (state.sort === "rating") {
+sortText =
+"by IMDb rating from highest to lowest";
+} else if (state.sort === "newest") {
+sortText = "from newest to oldest";
+} else {
+sortText = "from oldest to newest";
+}
+
+const hiddenBoilerplate = `
 
 RESEARCH AND SOURCE RULES:
 
@@ -1643,314 +1872,481 @@ At the end, include this statement:
 
 “Sources used: IMDb.com only.”`;
 
-      return parts.summary + hiddenBoilerplate;
-    }
-
-    function render() {
-      $("searchSummary").textContent =
-        getSummaryParts().summary;
-
-      $("yearOutput").textContent =
-        state.yearStart + "–" + state.yearEnd;
-
-      $("ratingOutput").textContent =
-        state.rating.toFixed(1) + "+";
-
-      const left =
-        ((state.yearStart - 2000) / 26) * 100;
-
-      const right =
-        100 -
-        ((state.yearEnd - 2000) / 26) * 100;
-
-      $("yearFill").style.left = left + "%";
-      $("yearFill").style.right = right + "%";
-    }
-
-    /* Movies, TV Series, or Both */
-
-    $("contentType").addEventListener(
-      "click",
-      (event) => {
-        const button =
-          event.target.closest("button[data-value]");
-
-        if (!button) {
-          return;
-        }
-
-        state.contentType = button.dataset.value;
-
-        $("contentType")
-          .querySelectorAll("button")
-          .forEach((item) => {
-            item.classList.toggle(
-              "active",
-              item === button
-            );
-          });
-
-        render();
-      }
-    );
-
-    /* Streaming services */
-
-    document
-      .querySelectorAll("button[data-service]")
-      .forEach((button) => {
-        button.addEventListener("click", () => {
-          const service = button.dataset.service;
-          const index =
-            state.services.indexOf(service);
-
-          if (index >= 0) {
-            state.services.splice(index, 1);
-          } else {
-            state.services.push(service);
-          }
-
-          const selected =
-            state.services.includes(service);
-
-          button.classList.toggle(
-            "selected",
-            selected
-          );
-
-          button.setAttribute(
-            "aria-pressed",
-            String(selected)
-          );
-
-          render();
-        });
-      });
-
-    /* More streaming services */
-
-    $("moreButton").addEventListener(
-      "click",
-      () => {
-        const open =
-          $("moreServices").classList.toggle("open");
-
-        $("moreButton").classList.toggle(
-          "selected",
-          open
-        );
-
-        $("moreButton").setAttribute(
-          "aria-expanded",
-          String(open)
-        );
-      }
-    );
-
-    /* Dropdowns */
-
-    [
-      "watchType",
-      "mood",
-      "topic",
-      "language",
-      "sort",
-      "specificType"
-    ].forEach((id) => {
-      $(id).addEventListener(
-        "change",
-        (event) => {
-          state[id] = event.target.value;
-
-          if (id === "language") {
-            state.customLanguage = "";
-            $("customLanguage").value = "";
-
-            $("customLanguage").classList.toggle(
-              "visible",
-              state.language === "Custom language"
-            );
-          }
-
-          if (id === "specificType") {
-            state.specificValue = "";
-            $("specificValue").value = "";
-
-            const visible =
-              state.specificType !== "None";
-
-            $("specificValue").classList.toggle(
-              "visible",
-              visible
-            );
-
-            const placeholders = {
-              "Actor/actress":
-                "Enter actor or actress name",
-
-              "Director":
-                "Enter director name",
-
-              "Custom request":
-                "Describe your custom request",
-
-              "Override the year range":
-                "Enter a year or range, such as 1990–1999"
-            };
-
-            $("specificValue").placeholder =
-              placeholders[state.specificType] || "";
-          }
-
-          render();
-        }
-      );
-    });
-
-    /* Conditional text fields */
-
-    $("customLanguage").addEventListener(
-      "input",
-      (event) => {
-        state.customLanguage =
-          event.target.value;
-
-        render();
-      }
-    );
-
-    $("specificValue").addEventListener(
-      "input",
-      (event) => {
-        state.specificValue =
-          event.target.value;
-
-        render();
-      }
-    );
-
-    /* Release year range */
-
-    $("yearStart").addEventListener(
-      "input",
-      (event) => {
-        state.yearStart = Math.min(
-          Number(event.target.value),
-          state.yearEnd - 1
-        );
-
-        event.target.value = state.yearStart;
-        render();
-      }
-    );
-
-    $("yearEnd").addEventListener(
-      "input",
-      (event) => {
-        state.yearEnd = Math.max(
-          Number(event.target.value),
-          state.yearStart + 1
-        );
-
-        event.target.value = state.yearEnd;
-        render();
-      }
-    );
-
-    /* IMDb rating */
-
-    $("rating").addEventListener(
-      "input",
-      (event) => {
-        state.rating =
-          Number(event.target.value);
-
-        render();
-      }
-    );
-
-    /* Copy the complete prompt */
-
-    $("copyPrompt").addEventListener(
-      "click",
-      async () => {
-        const status = $("copyStatus");
-        const completePrompt = buildFullPrompt();
-
-        try {
-          await navigator.clipboard.writeText(
-            completePrompt
-          );
-
-          status.textContent =
-            "Prompt copied to your clipboard.";
-
-          status.className =
-            "copy-status success";
-        } catch (error) {
-          const fallback =
-            document.createElement("textarea");
-
-          fallback.value = completePrompt;
-          fallback.setAttribute("readonly", "");
-          fallback.style.position = "fixed";
-          fallback.style.opacity = "0";
-
-          document.body.appendChild(fallback);
-          fallback.select();
-
-          const copied =
-            document.execCommand("copy");
-
-          fallback.remove();
-
-          status.textContent = copied
-            ? "Prompt copied to your clipboard."
-            : "Copy failed. Please try again.";
-
-          status.className = copied
-            ? "copy-status success"
-            : "copy-status error";
-        }
-
-        window.setTimeout(() => {
-          status.textContent =
-            "Your prompt updates automatically as you change the filters.";
-
-          status.className = "copy-status";
-        }, 2500);
-      }
-    );
-
-    /* Mobile navigation */
-
-    $("menuButton").addEventListener(
-      "click",
-      () => {
-        const open =
-          $("mobileMenu").classList.toggle("open");
-
-        $("menuButton").setAttribute(
-          "aria-expanded",
-          String(open)
-        );
-      }
-    );
-
-    $("mobileMenu")
-      .querySelectorAll("a")
-      .forEach((link) => {
-        link.addEventListener("click", () => {
-          $("mobileMenu").classList.remove("open");
-
-          $("menuButton").setAttribute(
-            "aria-expanded",
-            "false"
-          );
-        });
-      });
-
-    render();
-  </script>
+return parts.summary + hiddenBoilerplate;
+}
+
+function render() {
+$("searchSummary").textContent =
+getSummaryParts().summary;
+
+$("yearOutput").textContent =
+state.yearStart + "–" + state.yearEnd;
+
+$("ratingOutput").textContent =
+state.rating.toFixed(1) + "+";
+
+const left =
+((state.yearStart - 2000) / 26) * 100;
+
+const right =
+100 -
+((state.yearEnd - 2000) / 26) * 100;
+
+$("yearFill").style.left = left + "%";
+$("yearFill").style.right = right + "%";
+}
+
+/* Movies, TV Series, or Both */
+
+$("contentType").addEventListener(
+"click",
+(event) => {
+const button =
+event.target.closest("button[data-value]");
+
+if (!button) {
+return;
+}
+
+state.contentType = button.dataset.value;
+
+$("contentType")
+.querySelectorAll("button")
+.forEach((item) => {
+item.classList.toggle(
+"active",
+item === button
+);
+});
+
+render();
+}
+);
+
+/* Streaming services */
+
+document
+.querySelectorAll("button[data-service]")
+.forEach((button) => {
+button.addEventListener("click", () => {
+const service = button.dataset.service;
+const index =
+state.services.indexOf(service);
+
+if (index >= 0) {
+state.services.splice(index, 1);
+} else {
+state.services.push(service);
+}
+
+const selected =
+state.services.includes(service);
+
+button.classList.toggle(
+"selected",
+selected
+);
+
+button.setAttribute(
+"aria-pressed",
+String(selected)
+);
+
+render();
+});
+});
+
+/* More streaming services */
+
+$("moreButton").addEventListener(
+"click",
+() => {
+const open =
+$("moreServices").classList.toggle("open");
+
+$("moreButton").classList.toggle(
+"selected",
+open
+);
+
+$("moreButton").setAttribute(
+"aria-expanded",
+String(open)
+);
+}
+);
+
+/* Dropdowns */
+
+[
+"watchType",
+"mood",
+"topic",
+"language",
+"sort",
+"specificType"
+].forEach((id) => {
+$(id).addEventListener(
+"change",
+(event) => {
+state[id] = event.target.value;
+
+if (id === "language") {
+state.customLanguage = "";
+$("customLanguage").value = "";
+
+$("customLanguage").classList.toggle(
+"visible",
+state.language === "Custom language"
+);
+}
+
+if (id === "specificType") {
+state.specificValue = "";
+$("specificValue").value = "";
+
+const visible =
+state.specificType !== "None";
+
+$("specificValue").classList.toggle(
+"visible",
+visible
+);
+
+const placeholders = {
+"Actor/actress":
+"Enter actor or actress name",
+
+"Director":
+"Enter director name",
+
+"Custom request":
+"Describe your custom request",
+
+"Override the year range":
+"Enter a year or range, such as 1990–1999"
+};
+
+$("specificValue").placeholder =
+placeholders[state.specificType] || "";
+}
+
+render();
+}
+);
+});
+
+/* Conditional text fields */
+
+$("customLanguage").addEventListener(
+"input",
+(event) => {
+state.customLanguage =
+event.target.value;
+
+render();
+}
+);
+
+$("specificValue").addEventListener(
+"input",
+(event) => {
+state.specificValue =
+event.target.value;
+
+render();
+}
+);
+
+/* Release year range */
+
+$("yearStart").addEventListener(
+"input",
+(event) => {
+state.yearStart = Math.min(
+Number(event.target.value),
+state.yearEnd - 1
+);
+
+event.target.value = state.yearStart;
+render();
+}
+);
+
+$("yearEnd").addEventListener(
+"input",
+(event) => {
+state.yearEnd = Math.max(
+Number(event.target.value),
+state.yearStart + 1
+);
+
+event.target.value = state.yearEnd;
+render();
+}
+);
+
+/* IMDb rating */
+
+$("rating").addEventListener(
+"input",
+(event) => {
+state.rating =
+Number(event.target.value);
+
+render();
+}
+);
+
+/* Copy the complete prompt */
+
+$("copyPrompt").addEventListener(
+"click",
+async () => {
+const status = $("copyStatus");
+const completePrompt = buildFullPrompt();
+
+try {
+await navigator.clipboard.writeText(
+completePrompt
+);
+
+status.textContent =
+"Prompt copied to your clipboard.";
+
+status.className =
+"copy-status success";
+} catch (error) {
+const fallback =
+document.createElement("textarea");
+
+fallback.value = completePrompt;
+fallback.setAttribute("readonly", "");
+fallback.style.position = "fixed";
+fallback.style.opacity = "0";
+
+document.body.appendChild(fallback);
+fallback.select();
+
+const copied =
+document.execCommand("copy");
+
+fallback.remove();
+
+status.textContent = copied
+? "Prompt copied to your clipboard."
+: "Copy failed. Please try again.";
+
+status.className = copied
+? "copy-status success"
+: "copy-status error";
+}
+
+window.setTimeout(() => {
+status.textContent =
+"Your prompt updates automatically as you change the filters.";
+
+status.className = "copy-status";
+}, 2500);
+}
+);
+
+/* Mobile navigation */
+
+$("menuButton").addEventListener(
+"click",
+() => {
+const open =
+$("mobileMenu").classList.toggle("open");
+
+$("menuButton").setAttribute(
+"aria-expanded",
+String(open)
+);
+}
+);
+
+$("mobileMenu")
+.querySelectorAll("a, button")
+.forEach((link) => {
+link.addEventListener("click", () => {
+$("mobileMenu").classList.remove("open");
+
+$("menuButton").setAttribute(
+"aria-expanded",
+"false"
+);
+});
+});
+
+/* Getting Started dialog */
+
+const gettingStartedKey =
+"reelscoutGettingStartedSeenV3";
+
+const modal =
+$("gettingStartedModal");
+
+const dialog =
+modal.querySelector(".getting-started-dialog");
+
+const modalControls = [
+$("openGettingStarted"),
+$("openGettingStartedMobile")
+];
+
+let previousFocus = null;
+
+function rememberGettingStarted() {
+try {
+window.localStorage.setItem(
+gettingStartedKey,
+"true"
+);
+} catch (error) {
+/* The popup still works without browser storage. */
+}
+}
+
+function hasSeenGettingStarted() {
+try {
+return Boolean(
+window.localStorage.getItem(
+gettingStartedKey
+)
+);
+} catch (error) {
+return false;
+}
+}
+
+function openGettingStarted() {
+previousFocus = document.activeElement;
+modal.hidden = false;
+document.body.style.overflow = "hidden";
+
+$("openGettingStarted")
+.classList.remove("is-new");
+
+rememberGettingStarted();
+
+window.setTimeout(() => {
+$("closeGettingStarted").focus();
+}, 0);
+}
+
+function closeGettingStarted(
+moveToBuilder = false
+) {
+modal.hidden = true;
+document.body.style.overflow = "";
+
+if (moveToBuilder) {
+$("builder").scrollIntoView({
+behavior: "smooth",
+block: "start"
+});
+
+window.setTimeout(() => {
+const firstChoice =
+document.querySelector(
+"#contentType button"
+);
+
+if (firstChoice) {
+firstChoice.focus();
+}
+}, 350);
+} else if (
+previousFocus &&
+typeof previousFocus.focus === "function"
+) {
+previousFocus.focus();
+}
+}
+
+modalControls.forEach((control) => {
+control.addEventListener("click", () => {
+$("mobileMenu").classList.remove("open");
+
+$("menuButton").setAttribute(
+"aria-expanded",
+"false"
+);
+
+openGettingStarted();
+});
+});
+
+$("closeGettingStarted")
+.addEventListener(
+"click",
+() => closeGettingStarted()
+);
+
+$("beginSearch")
+.addEventListener(
+"click",
+() => closeGettingStarted(true)
+);
+
+modal.addEventListener(
+"click",
+(event) => {
+if (event.target === modal) {
+closeGettingStarted();
+}
+}
+);
+
+modal.addEventListener(
+"keydown",
+(event) => {
+if (event.key === "Escape") {
+closeGettingStarted();
+return;
+}
+
+if (event.key !== "Tab") {
+return;
+}
+
+const focusable =
+dialog.querySelectorAll(
+"button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+);
+
+const first = focusable[0];
+const last =
+focusable[focusable.length - 1];
+
+if (
+event.shiftKey &&
+document.activeElement === first
+) {
+event.preventDefault();
+last.focus();
+} else if (
+!event.shiftKey &&
+document.activeElement === last
+) {
+event.preventDefault();
+first.focus();
+}
+}
+);
+
+if (hasSeenGettingStarted()) {
+$("openGettingStarted")
+.classList.remove("is-new");
+} else {
+window.setTimeout(
+openGettingStarted,
+550
+);
+}
+
+render();
+</script>
 </body>
 </html>
