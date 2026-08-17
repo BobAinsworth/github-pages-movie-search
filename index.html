@@ -291,10 +291,6 @@
       margin-bottom: 12px;
     }
 
-    .step-banner span {
-      margin: 0 8px;
-    }
-
     .filter-group {
       border: 0;
       padding: 0;
@@ -308,6 +304,10 @@
       font-size: 13px;
       font-weight: 650;
       color: #f1f3f6;
+    }
+
+    .filter-group legend > span {
+      font-weight: 500;
     }
 
     .segmented-control {
@@ -387,19 +387,19 @@
     }
 
     .service-primevideo {
-      color: #167cae;
+      color: #0773a8;
     }
 
     .service-max {
-      color: #1857b7;
+      color: #075eca;
     }
 
     .service-disney {
-      color: #26385e;
+      color: #244980;
     }
 
     .service-hulu {
-      color: #087a3d;
+      color: #08783b;
       font-size: 16px;
     }
 
@@ -555,16 +555,6 @@
       flex-direction: column;
     }
 
-    .prompt-eyebrow {
-      display: block;
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 9px;
-    }
-
     .prompt-panel h2 {
       font-family: Georgia, "Times New Roman", serif;
       font-size: 29px;
@@ -585,14 +575,30 @@
         );
       font-size: clamp(19px, 1.75vw, 28px);
       line-height: 1.48;
-      white-space: pre-line;
+    }
+
+    .request-preview {
+      margin: 0;
+    }
+
+    .summary-callout {
+      margin: 18px 0 0;
+      padding: 16px 20px;
+      border: 1px solid rgba(242, 184, 33, 0.72);
+      border-radius: 8px;
+      background: rgba(242, 184, 33, 0.1);
+      color: var(--gold-2);
+      font-size: clamp(16px, 1.25vw, 20px);
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 0.01em;
     }
 
     .steps-grid {
       display: grid;
       grid-template-columns: 1fr 1.08fr;
       gap: 24px;
-      margin-top: 28px;
+      margin-top: 18px;
     }
 
     .step-action,
@@ -753,6 +759,10 @@
         border-radius: 6px;
       }
 
+      .mobile-menu a:hover {
+        background: #1a2635;
+      }
+
       .hero {
         min-height: 286px;
         background-position: center;
@@ -859,6 +869,12 @@
         line-height: 1.5;
       }
 
+      .summary-callout {
+        margin-top: 24px;
+        padding: 14px;
+        font-size: 16px;
+      }
+
       .steps-grid {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -955,7 +971,6 @@
           <span class="film-dot dot-four"></span>
           <span class="film-center"></span>
         </span>
-
         <span>Reel<span>Scout</span></span>
       </a>
 
@@ -998,23 +1013,17 @@
 
     <div id="builder" class="builder-shell">
       <aside class="filter-panel" aria-label="Search preferences">
-        <div class="step-banner">
-          Step 1 <span>–</span> Build Your Search
-        </div>
+        <div class="step-banner">Step 1- Build Your Search Below</div>
 
         <fieldset class="filter-group">
           <legend>What do you want to watch?</legend>
 
           <div class="segmented-control" id="contentTypes">
-            <button type="button" data-content="Movies">
+            <button type="button" class="active" data-content="Movies">
               <span aria-hidden="true">▤</span>Movies
             </button>
 
-            <button
-              type="button"
-              class="active"
-              data-content="TV Series"
-            >
+            <button type="button" data-content="TV Series">
               <span aria-hidden="true">▣</span>TV Series
             </button>
 
@@ -1072,20 +1081,12 @@
               <span class="service-mark service-hulu">h</span>Hulu
             </button>
 
-            <button
-              id="moreButton"
-              type="button"
-              aria-expanded="false"
-            >
+            <button id="moreButton" type="button" aria-expanded="false">
               <span class="service-mark">•••</span>More
             </button>
           </div>
 
-          <div
-            id="moreServices"
-            class="service-chips more-services"
-            hidden
-          >
+          <div id="moreServices" class="service-chips more-services" hidden>
             <button type="button" data-service="Apple TV" aria-pressed="false">
               Apple TV
             </button>
@@ -1132,7 +1133,11 @@
               Crunchyroll
             </button>
 
-            <button type="button" data-service="BritBox" aria-pressed="false">
+            <button
+              type="button"
+              data-service="BritBox"
+              aria-pressed="false"
+            >
               BritBox
             </button>
 
@@ -1154,7 +1159,7 @@
           How would you like to watch?
 
           <select id="watchType">
-            <option>Free to stream</option>
+            <option>Included with subscription</option>
             <option>Rent or buy</option>
             <option>Both</option>
           </select>
@@ -1289,49 +1294,32 @@
           </label>
 
           <label id="specificWrap" hidden>
-            <span class="sr-only" id="specificLabel">
-              Specific request
-            </span>
-
-            <input
-              id="specificValue"
-              aria-labelledby="specificLabel"
-            >
+            <span class="sr-only" id="specificLabel">Specific request</span>
+            <input id="specificValue" aria-labelledby="specificLabel">
           </label>
         </div>
       </aside>
 
-      <section
-        class="prompt-panel"
-        aria-label="Generated search prompt"
-      >
-        <div>
-          <span class="prompt-eyebrow">
-            Live IMDb-only prompt preview
-          </span>
+      <section class="prompt-panel" aria-label="Generated search prompt">
+        <h2>Your Search Summary</h2>
 
-          <h2>Your Search Prompt</h2>
+        <div class="prompt-box" aria-live="polite">
+          <p id="requestPreview" class="request-preview"></p>
         </div>
 
-        <div
-          id="promptBox"
-          class="prompt-box"
-          aria-live="polite"
-        ></div>
+        <p class="summary-callout">
+          Click on Step 2 to create your prompt
+        </p>
 
         <div id="steps" class="steps-grid">
-          <button
-            id="copyButton"
-            class="step-action"
-            type="button"
-          >
+          <button id="copyButton" class="step-action" type="button">
             <span class="copy-icon" aria-hidden="true">
               <i></i>
               <i></i>
             </span>
 
             <span>
-              Step 2 <b>–</b> Click here to
+              Step 2 – Click here to
               <br class="desktop-break">
               Copy Prompt.
             </span>
@@ -1339,7 +1327,7 @@
 
           <div class="step-instruction">
             <span>
-              Step 3 <b>–</b> Open ChatGPT,
+              Step 3 – Open ChatGPT,
               <br>
               Gemini, etc. and paste
               <br>
@@ -1348,11 +1336,7 @@
           </div>
         </div>
 
-        <div
-          id="copyStatus"
-          class="copy-status"
-          role="status"
-        >
+        <div id="copyStatus" class="copy-status" role="status">
           Your prompt updates automatically as you change the filters.
         </div>
       </section>
@@ -1362,7 +1346,7 @@
   <script>
     (() => {
       const state = {
-        contentType: "TV Series",
+        contentType: "Movies",
         services: new Set([
           "Netflix",
           "Prime Video",
@@ -1373,7 +1357,7 @@
       };
 
       const byId = (id) => document.getElementById(id);
-      const promptBox = byId("promptBox");
+      const requestPreview = byId("requestPreview");
       const copyStatus = byId("copyStatus");
 
       function joinNatural(items) {
@@ -1388,7 +1372,7 @@
         return `${items.slice(0, -1).join(", ")} or ${items.at(-1)}`;
       }
 
-      function buildPrompt() {
+      function buildPromptParts() {
         const yearStart = Number(byId("yearStart").value);
         const yearEnd = Number(byId("yearEnd").value);
         const rating = Number(byId("rating").value).toFixed(1);
@@ -1423,7 +1407,7 @@
           : "";
 
         const watchText =
-          watchType === "Free to stream"
+          watchType === "Included with subscription"
             ? "available to stream for free"
             : watchType === "Rent or buy"
               ? "available to rent or buy"
@@ -1433,14 +1417,10 @@
 
         if (specificType !== "None" && specificValue) {
           if (specificType === "Actor/actress") {
-            specificText =
-              ` Include titles featuring ${specificValue}.`;
+            specificText = ` Include titles featuring ${specificValue}.`;
           } else if (specificType === "Director") {
-            specificText =
-              ` Include titles directed by ${specificValue}.`;
-          } else if (
-            specificType === "Override the year range"
-          ) {
+            specificText = ` Include titles directed by ${specificValue}.`;
+          } else if (specificType === "Override the year range") {
             specificText =
               ` Override the selected year range and use ` +
               `${specificValue} instead.`;
@@ -1459,23 +1439,72 @@
                 ? "from newest to oldest"
                 : "from oldest to newest";
 
-        return `I would like you to investigate the IMDb website to identify ${subject} rated ${rating} or higher, ${dateText}${genreText}. Show titles ${watchText} on ${joinNatural([...state.services])}.${specificText}
+        const request =
+          `I would like you to investigate the IMDb website to identify ` +
+          `${subject} rated ${rating} or higher, ${dateText}${genreText}. ` +
+          `Show titles ${watchText} on ` +
+          `${joinNatural([...state.services])}.${specificText}`;
 
-SOURCE RESTRICTION — IMDb ONLY (MANDATORY):
+        const additional = `SOURCE AND ELIGIBILITY RESTRICTIONS — IMDb ONLY (MANDATORY):
 
-Use only pages hosted on the imdb.com domain. Do not open, use, rely on, or cite search-result snippets or information from any other website, including Google, Wikipedia, JustWatch, Rotten Tomatoes, streaming-service websites, or other non-IMDb sources.
+Use IMDb.com as the only information source. Use IMDb search, title, episode, and Watch options information to discover and verify titles. Do not open, use, rely on, or cite information from Wikipedia, Google search-result snippets, JustWatch, Rotten Tomatoes, streaming-service websites, or any other non-IMDb source.
 
-Only report ${subject} for which IMDb itself displays the requested current streaming availability from at least one of the streaming services selected in this request. If IMDb does not display the requested streaming availability for a title, exclude that title. Do not consult another website to verify or supplement availability.
+Assume streaming availability for viewers in the United States.
 
-Every title, release year, length or episode count, streaming service, IMDb rating, and IMDb link included in the results must be verifiable on IMDb.
+For this request, “available to stream for free” and “included with subscription” mean that someone with an existing paid subscription to one of the selected streaming services can watch the title without paying an additional rental or purchase fee.
 
-If no titles meet all requirements using IMDb alone, respond exactly: “No titles with IMDb-verified streaming availability were found for these selections.” Do not broaden the search or use other sources.
+Verify every candidate title separately. A title qualifies only when IMDb’s Watch options information for that specific title currently displays at least one of the streaming services selected in this request and shows that it satisfies the requested viewing method.
 
-Return each result in this format: Title - Year Released - Length (if movie) or Episodes (if series) - Streaming Service - IMDb Rating - IMDb Link. Present the results as a bulleted list with a solid dot (•) before each entry. Keep each individual entry single-spaced and on one line. Insert one blank line between entries for readability, especially on mobile devices. Sort the results ${sortText}. Provide a working IMDb Link for every result. At the end, include this statement: “Sources used: IMDb.com only.”`;
+Do not treat any of the following as verification:
+• A search-result snippet
+• A general streaming-service page
+• A provider listed for a different title or season
+• Availability inferred from promotional text
+• Rental or purchase availability when “included with subscription” was requested
+• Information from any non-IMDb website
+
+If IMDb does not display sufficient Watch options information to verify the requested streaming service and viewing method, exclude the title. Do not consult another source, guess, infer availability, or include the title with a disclaimer.
+
+Every reported title, release year, movie length or series episode count, streaming service, IMDb rating, and IMDb link must be verifiable using IMDb. The IMDb Link must lead to the IMDb page for that specific movie or TV series.
+
+Before returning the results, perform a final eligibility check on every title:
+1. The title matches the selected content type, years, categories, and minimum rating.
+2. IMDb verifies the title details being reported.
+3. IMDb’s Watch options information verifies the selected streaming service.
+4. The IMDb availability matches the requested viewing method.
+5. No non-IMDb information was used.
+
+Exclude any title that fails even one of these checks. Return qualifying results only. Do not include possible matches, partially verified matches, recommendations, explanations, or titles whose availability is uncertain.
+
+If qualifying titles are found, return each result in this format:
+• Title - Year Released - Length (if movie) or Episodes (if series) - Streaming Service - IMDb Rating - IMDb Link
+
+Keep each individual entry single-spaced. Insert one blank line between entries for readability, especially on mobile devices. Sort the results ${sortText}.
+
+After the results, include:
+Sources used: IMDb.com only.
+
+If no qualifying titles are found, respond with only:
+No titles with IMDb-verified streaming availability were found for these selections.
+
+Sources used: IMDb.com only.`;
+
+        return {
+          request,
+          additional,
+          full: `${request}
+
+${additional}`
+        };
+      }
+
+      function buildPrompt() {
+        return buildPromptParts().full;
       }
 
       function updatePrompt() {
-        promptBox.textContent = buildPrompt();
+        const parts = buildPromptParts();
+        requestPreview.textContent = parts.request;
       }
 
       function updateYearRange(changed) {
@@ -1511,30 +1540,23 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
         updatePrompt();
       }
 
-      byId("contentTypes").addEventListener(
-        "click",
-        (event) => {
-          const button =
-            event.target.closest("button[data-content]");
+      byId("contentTypes").addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-content]");
 
-          if (!button) {
-            return;
-          }
-
-          state.contentType = button.dataset.content;
-
-          document
-            .querySelectorAll("[data-content]")
-            .forEach((item) => {
-              item.classList.toggle(
-                "active",
-                item === button
-              );
-            });
-
-          updatePrompt();
+        if (!button) {
+          return;
         }
-      );
+
+        state.contentType = button.dataset.content;
+
+        document
+          .querySelectorAll("[data-content]")
+          .forEach((item) => {
+            item.classList.toggle("active", item === button);
+          });
+
+        updatePrompt();
+      });
 
       document
         .querySelectorAll("button[data-service]")
@@ -1551,10 +1573,7 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
             const selected = state.services.has(service);
 
             button.classList.toggle("selected", selected);
-            button.setAttribute(
-              "aria-pressed",
-              String(selected)
-            );
+            button.setAttribute("aria-pressed", String(selected));
 
             updatePrompt();
           });
@@ -1566,35 +1585,24 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
 
         panel.hidden = !opening;
 
-        byId("moreButton").classList.toggle(
-          "selected",
-          opening
-        );
-
+        byId("moreButton").classList.toggle("selected", opening);
         byId("moreButton").setAttribute(
           "aria-expanded",
           String(opening)
         );
       });
 
-      [
-        "watchType",
-        "mood",
-        "topic",
-        "sort"
-      ].forEach((id) => {
+      ["watchType", "mood", "topic", "sort"].forEach((id) => {
         byId(id).addEventListener("change", updatePrompt);
       });
 
-      byId("yearStart").addEventListener(
-        "input",
-        (event) => updateYearRange(event.target)
-      );
+      byId("yearStart").addEventListener("input", (event) => {
+        updateYearRange(event.target);
+      });
 
-      byId("yearEnd").addEventListener(
-        "input",
-        (event) => updateYearRange(event.target)
-      );
+      byId("yearEnd").addEventListener("input", (event) => {
+        updateYearRange(event.target);
+      });
 
       byId("rating").addEventListener("input", () => {
         byId("ratingOutput").textContent =
@@ -1603,97 +1611,80 @@ Return each result in this format: Title - Year Released - Length (if movie) or 
         updatePrompt();
       });
 
-      byId("specificType").addEventListener(
-        "change",
-        () => {
-          const type = byId("specificType").value;
-          const input = byId("specificValue");
+      byId("specificType").addEventListener("change", () => {
+        const type = byId("specificType").value;
+        const input = byId("specificValue");
 
-          byId("specificWrap").hidden = type === "None";
-          input.value = "";
+        byId("specificWrap").hidden = type === "None";
+        input.value = "";
 
-          input.placeholder =
-            type === "Actor/actress"
-              ? "Enter actor or actress name"
-              : type === "Director"
-                ? "Enter director name"
-                : type === "Override the year range"
-                  ? "Enter a year or range, such as 1990–1999"
-                  : "Describe your custom request";
+        input.placeholder =
+          type === "Actor/actress"
+            ? "Enter actor or actress name"
+            : type === "Director"
+              ? "Enter director name"
+              : type === "Override the year range"
+                ? "Enter a year or range, such as 1990–1999"
+                : "Describe your custom request";
 
-          updatePrompt();
+        updatePrompt();
+      });
+
+      byId("specificValue").addEventListener("input", updatePrompt);
+
+      byId("copyButton").addEventListener("click", async () => {
+        let copied = false;
+
+        try {
+          await navigator.clipboard.writeText(buildPrompt());
+          copied = true;
+        } catch (_) {
+          const fallback = document.createElement("textarea");
+
+          fallback.value = buildPrompt();
+          fallback.setAttribute("readonly", "");
+          fallback.style.position = "fixed";
+          fallback.style.opacity = "0";
+
+          document.body.appendChild(fallback);
+          fallback.select();
+
+          copied = document.execCommand("copy");
+          fallback.remove();
         }
-      );
 
-      byId("specificValue").addEventListener(
-        "input",
-        updatePrompt
-      );
+        copyStatus.textContent = copied
+          ? "Prompt copied to your clipboard."
+          : "Copy failed. Please try again.";
 
-      byId("copyButton").addEventListener(
-        "click",
-        async () => {
-          let copied = false;
+        copyStatus.className =
+          `copy-status ${copied ? "copied" : "error"}`;
 
-          try {
-            await navigator.clipboard.writeText(
-              buildPrompt()
-            );
+        window.setTimeout(() => {
+          copyStatus.textContent =
+            "Your prompt updates automatically as you change the filters.";
 
-            copied = true;
-          } catch (_) {
-            const fallback =
-              document.createElement("textarea");
+          copyStatus.className = "copy-status";
+        }, 2200);
+      });
 
-            fallback.value = buildPrompt();
-            fallback.setAttribute("readonly", "");
-            fallback.style.position = "fixed";
-            fallback.style.opacity = "0";
+      byId("menuButton").addEventListener("click", () => {
+        const menu = byId("mobileMenu");
+        const opening = menu.hidden;
 
-            document.body.appendChild(fallback);
-            fallback.select();
+        menu.hidden = !opening;
 
-            copied = document.execCommand("copy");
-            fallback.remove();
-          }
-
-          copyStatus.textContent = copied
-            ? "Prompt copied to your clipboard."
-            : "Copy failed. Select the prompt text and copy it manually.";
-
-          copyStatus.className =
-            `copy-status ${copied ? "copied" : "error"}`;
-
-          window.setTimeout(() => {
-            copyStatus.textContent =
-              "Your prompt updates automatically as you change the filters.";
-
-            copyStatus.className = "copy-status";
-          }, 2200);
-        }
-      );
-
-      byId("menuButton").addEventListener(
-        "click",
-        () => {
-          const menu = byId("mobileMenu");
-          const opening = menu.hidden;
-
-          menu.hidden = !opening;
-
-          byId("menuButton").setAttribute(
-            "aria-expanded",
-            String(opening)
-          );
-        }
-      );
+        byId("menuButton").setAttribute(
+          "aria-expanded",
+          String(opening)
+        );
+      });
 
       document
         .querySelectorAll("#mobileMenu a")
         .forEach((link) => {
           link.addEventListener("click", () => {
             byId("mobileMenu").hidden = true;
-
             byId("menuButton").setAttribute(
               "aria-expanded",
               "false"
