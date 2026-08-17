@@ -222,13 +222,8 @@
     }
 
     @keyframes start-pulse {
-      0%, 100% {
-        box-shadow: 0 7px 24px rgba(242, 184, 33, 0.25);
-      }
-
-      50% {
-        box-shadow: 0 8px 34px rgba(255, 207, 82, 0.72);
-      }
+      0%, 100% { box-shadow: 0 7px 24px rgba(242, 184, 33, 0.25); }
+      50% { box-shadow: 0 8px 34px rgba(255, 207, 82, 0.72); }
     }
 
     .builder-pill {
@@ -369,7 +364,7 @@
       overflow: hidden;
       isolation: isolate;
       background:
-        #07101a url("https://bobainsworth.github.io/github-pages-movie-search/images/reelscout.jpg") center 47% / cover no-repeat;
+        #07101a url("images/movie-hero-mockup.png") center center / cover no-repeat;
       border-bottom: 1px solid #2b3948;
     }
 
@@ -378,22 +373,18 @@
       position: absolute;
       inset: 0;
       z-index: -1;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(4, 8, 13, 0.82),
-          rgba(5, 12, 20, 0.35) 48%,
-          rgba(4, 8, 13, 0.78)
-        ),
-        linear-gradient(
-          0deg,
-          rgba(4, 9, 15, 0.63),
-          rgba(4, 9, 15, 0.18)
-        );
+      background: transparent;
     }
 
     .hero-content {
-      padding: 36px 20px;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
     }
 
     .hero h1 {
@@ -991,11 +982,23 @@
 
       .hero {
         min-height: 286px;
-        background-position: center;
+        background:
+          #07101a url("images/movie-hero-background.png") center center / cover no-repeat;
+      }
+
+      .hero::before {
+        background: rgba(4, 9, 15, 0.5);
       }
 
       .hero-content {
+        position: relative;
+        width: auto;
+        height: auto;
         padding: 36px 24px;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
       }
 
       .hero h1 {
@@ -1126,10 +1129,11 @@
     }
 
     @media (max-width: 430px) {
-      .brand {
+         .brand {
         font-size: 25px;
       }
-          .hero {
+
+      .hero {
         min-height: 300px;
       }
 
@@ -1237,14 +1241,7 @@
       aria-labelledby="gettingStartedTitle"
       aria-describedby="gettingStartedDescription"
     >
-      <button
-        class="modal-close"
-        id="closeGettingStarted"
-        type="button"
-        aria-label="Close Getting Started"
-      >
-        ×
-      </button>
+      <button class="modal-close" id="closeGettingStarted" type="button" aria-label="Close Getting Started">×</button>
 
       <h2 id="gettingStartedTitle">Getting Started</h2>
 
@@ -1253,45 +1250,19 @@
       </p>
 
       <ol class="getting-started-steps">
-        <li>
-          You will need an active AI account, such as ChatGPT or Gemini.
-        </li>
-
-        <li>
-          In the left panel, choose what you want to watch and adjust the
-          search options. Some choices are already selected; click
-          <strong>More</strong> to see additional streaming services.
-        </li>
-
-        <li>
-          Review <strong>Your Search Summary</strong> in the right panel,
-          which updates automatically.
-        </li>
-
-        <li>
-          Click <strong>Step 2</strong> to copy the complete prompt,
-          including detailed instructions added automatically.
-        </li>
-
-        <li>
-          Open ChatGPT, Gemini, Claude, Grok, or another AI assistant.
-          Start a new chat, paste the prompt, and send it.
-        </li>
+        <li>You will need an active AI account, such as ChatGPT or Gemini.</li>
+        <li>In the left panel, choose what you want to watch and adjust the search options. Some choices are already selected; click <strong>More</strong> to see additional streaming services.</li>
+        <li>Review <strong>Your Search Summary</strong> in the right panel, which updates automatically.</li>
+        <li>Click <strong>Step 2</strong> to copy the complete prompt, including detailed instructions added automatically.</li>
+        <li>Open ChatGPT, Gemini, Claude, Grok, or another AI assistant. Start a new chat, paste the prompt, and send it.</li>
       </ol>
 
       <p class="getting-started-note">
-        Results are designed for U.S. streaming services. Because
-        availability changes, verify titles before renting or purchasing.
+        Results are designed for U.S. streaming services. Because availability changes, verify titles before renting or purchasing.
       </p>
 
       <div class="getting-started-actions">
-        <button
-          class="getting-started-primary"
-          id="beginSearch"
-          type="button"
-        >
-          Let’s Get Started
-        </button>
+        <button class="getting-started-primary" id="beginSearch" type="button">Let’s Get Started</button>
       </div>
     </section>
   </div>
@@ -1398,11 +1369,7 @@
           </div>
 
           <div class="service-chips more-services" id="moreServices">
-            <button
-              type="button"
-              data-service="Apple TV"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="Apple TV" aria-pressed="false">
               Apple TV
             </button>
 
@@ -1424,59 +1391,31 @@
               Paramount+
             </button>
 
-            <button
-              type="button"
-              data-service="Starz"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="Starz" aria-pressed="false">
               Starz
             </button>
 
-            <button
-              type="button"
-              data-service="AMC+"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="AMC+" aria-pressed="false">
               AMC+
             </button>
 
-            <button
-              type="button"
-              data-service="Discovery+"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="Discovery+" aria-pressed="false">
               Discovery+
             </button>
 
-            <button
-              type="button"
-              data-service="Crunchyroll"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="Crunchyroll" aria-pressed="false">
               Crunchyroll
             </button>
 
-            <button
-              type="button"
-              data-service="BritBox"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="BritBox" aria-pressed="false">
               BritBox
             </button>
 
-            <button
-              type="button"
-              data-service="BET+"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="BET+" aria-pressed="false">
               BET+
             </button>
 
-            <button
-              type="button"
-              data-service="Hallmark+"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="Hallmark+" aria-pressed="false">
               Hallmark+
             </button>
           </div>
@@ -2237,164 +2176,87 @@ At the end, include this statement:
 
     /* Getting Started dialog */
 
-    const gettingStartedKey =
-      "reelscoutGettingStartedSeenV3";
-
-    const modal =
-      $("gettingStartedModal");
-
-    const dialog =
-      modal.querySelector(
-        ".getting-started-dialog"
-      );
-
+    const gettingStartedKey = "reelscoutGettingStartedSeenV3";
+    const modal = $("gettingStartedModal");
+    const dialog = modal.querySelector(".getting-started-dialog");
     const modalControls = [
       $("openGettingStarted"),
       $("openGettingStartedMobile")
     ];
-
     let previousFocus = null;
 
     function openGettingStarted() {
-      previousFocus =
-        document.activeElement;
-
+      previousFocus = document.activeElement;
       modal.hidden = false;
-      document.body.style.overflow = "";
-
       document.body.style.overflow = "hidden";
-
-      $("openGettingStarted")
-        .classList.remove("is-new");
-
-      window.localStorage.setItem(
-        gettingStartedKey,
-        "true"
-      );
-
-      window.setTimeout(
-        () =>
-          $("closeGettingStarted").focus(),
-        0
-      );
+      $("openGettingStarted").classList.remove("is-new");
+      window.localStorage.setItem(gettingStartedKey, "true");
+      window.setTimeout(() => $("closeGettingStarted").focus(), 0);
     }
 
-    function closeGettingStarted(
-      moveToTop = false
-    ) {
+    function closeGettingStarted(moveToTop = false) {
       modal.hidden = true;
       document.body.style.overflow = "";
 
       if (moveToTop) {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: "smooth"
-        });
-
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
         window.setTimeout(() => {
-          $("openGettingStarted").focus({
-            preventScroll: true
-          });
+          $("openGettingStarted").focus({ preventScroll: true });
         }, 350);
-      } else if (
-        previousFocus &&
-        typeof previousFocus.focus === "function"
-      ) {
+      } else if (previousFocus && previousFocus.focus) {
         previousFocus.focus();
       }
     }
 
     modalControls.forEach((control) => {
-      control.addEventListener(
-        "click",
-        () => {
-          $("mobileMenu")
-            .classList.remove("open");
-
-          $("menuButton").setAttribute(
-            "aria-expanded",
-            "false"
-          );
-
-          openGettingStarted();
-        }
-      );
+      control.addEventListener("click", () => {
+        $("mobileMenu").classList.remove("open");
+        $("menuButton").setAttribute("aria-expanded", "false");
+        openGettingStarted();
+      });
     });
 
-    $("closeGettingStarted")
-      .addEventListener(
-        "click",
-        () => closeGettingStarted()
-      );
+    $("closeGettingStarted").addEventListener("click", () => closeGettingStarted());
+    $("beginSearch").addEventListener("click", () => closeGettingStarted(true));
 
-    $("beginSearch")
-      .addEventListener(
-        "click",
-        () => closeGettingStarted(true)
-      );
-
-    modal.addEventListener(
-      "click",
-      (event) => {
-        if (event.target === modal) {
-          closeGettingStarted();
-        }
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeGettingStarted();
       }
-    );
+    });
 
-    modal.addEventListener(
-      "keydown",
-      (event) => {
-        if (event.key === "Escape") {
-          closeGettingStarted();
-          return;
-        }
-
-        if (event.key !== "Tab") {
-          return;
-        }
-
-        const focusable =
-          dialog.querySelectorAll(
-            "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
-          );
-
-        const first = focusable[0];
-        const last =
-          focusable[focusable.length - 1];
-
-        if (
-          event.shiftKey &&
-          document.activeElement === first
-        ) {
-          event.preventDefault();
-          last.focus();
-        } else if (
-          !event.shiftKey &&
-          document.activeElement === last
-        ) {
-          event.preventDefault();
-          first.focus();
-        }
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeGettingStarted();
+        return;
       }
-    );
 
-    if (
-      window.localStorage.getItem(
-        gettingStartedKey
-      )
-    ) {
-      $("openGettingStarted")
-        .classList.remove("is-new");
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const focusable = dialog.querySelectorAll(
+        "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    if (window.localStorage.getItem(gettingStartedKey)) {
+      $("openGettingStarted").classList.remove("is-new");
     } else {
-      window.setTimeout(
-        openGettingStarted,
-        550
-      );
+      window.setTimeout(openGettingStarted, 550);
     }
 
     render();
   </script>
 </body>
-</html>  
+</html>   
