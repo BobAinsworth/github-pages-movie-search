@@ -306,10 +306,6 @@
       color: #f1f3f6;
     }
 
-    .filter-group legend > span {
-      font-weight: 500;
-    }
-
     .segmented-control {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -415,6 +411,9 @@
       display: grid;
       gap: 6px;
       margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 650;
+      color: #f1f3f6;
     }
 
     select,
@@ -446,6 +445,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size: 13px;
+      font-weight: 650;
+      color: #f1f3f6;
     }
 
     .range-title output {
@@ -591,7 +593,6 @@
       font-size: clamp(16px, 1.25vw, 20px);
       font-weight: 800;
       text-align: center;
-      letter-spacing: 0.01em;
     }
 
     .steps-grid {
@@ -622,11 +623,6 @@
       transform: translateY(-2px);
     }
 
-    .step-action b,
-    .step-instruction b {
-      font-weight: 400;
-    }
-
     .copy-icon {
       width: 39px;
       height: 38px;
@@ -651,7 +647,6 @@
     .copy-icon i:last-child {
       right: 0;
       bottom: 0;
-      background: rgba(255, 255, 255, 0.05);
     }
 
     .copy-status {
@@ -759,13 +754,8 @@
         border-radius: 6px;
       }
 
-      .mobile-menu a:hover {
-        background: #1a2635;
-      }
-
       .hero {
         min-height: 286px;
-        background-position: center;
       }
 
       .hero-content {
@@ -780,7 +770,6 @@
       .hero p {
         font-size: 17px;
         line-height: 1.45;
-        max-width: 620px;
       }
 
       .builder-shell {
@@ -788,24 +777,13 @@
         padding: 14px 16px 30px;
       }
 
-      .filter-panel,
-      .prompt-panel {
-        border-radius: 12px;
-      }
-
       .filter-panel {
-        padding: 17px 17px 19px;
+        padding: 17px;
       }
 
       .step-banner {
         min-height: 50px;
         font-size: 22px;
-      }
-
-      .filter-group legend,
-      .field-label,
-      .range-title {
-        font-size: 15px;
       }
 
       .segmented-control button {
@@ -825,33 +803,6 @@
         font-size: 14px;
       }
 
-      .dual-range {
-        height: 35px;
-      }
-
-      .dual-range-track {
-        top: 16px;
-      }
-
-      .dual-range input[type="range"] {
-        height: 35px;
-      }
-
-      .dual-range input[type="range"]::-webkit-slider-thumb {
-        width: 23px;
-        height: 23px;
-        margin-top: -10px;
-      }
-
-      .dual-range input[type="range"]::-moz-range-thumb {
-        width: 23px;
-        height: 23px;
-      }
-
-      .rating-range input[type="range"] {
-        height: 24px;
-      }
-
       .prompt-panel {
         margin-top: 14px;
         padding: 22px 18px 14px;
@@ -866,19 +817,11 @@
         min-height: 0;
         padding: 20px 18px;
         font-size: 17px;
-        line-height: 1.5;
-      }
-
-      .summary-callout {
-        margin-top: 24px;
-        padding: 14px;
-        font-size: 16px;
       }
 
       .steps-grid {
         grid-template-columns: 1fr;
         gap: 10px;
-        margin-top: 16px;
       }
 
       .step-action,
@@ -890,14 +833,6 @@
       .desktop-break {
         display: none;
       }
-
-      .copy-status {
-        font-size: 11px;
-      }
-
-      .range-ends {
-        font-size: 11px;
-      }
     }
 
     @media (max-width: 430px) {
@@ -905,21 +840,8 @@
         font-size: 25px;
       }
 
-      .hero {
-        min-height: 300px;
-      }
-
       .hero h1 {
         font-size: 36px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .segmented-control button {
-        font-size: 12px;
-        gap: 4px;
       }
 
       .service-chips {
@@ -933,28 +855,6 @@
 
       .more-services {
         display: grid;
-      }
-
-      .prompt-box {
-        font-size: 16px;
-      }
-
-      .step-action,
-      .step-instruction {
-        font-size: 17px;
-      }
-
-      .copy-icon {
-        margin-right: 12px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -971,6 +871,7 @@
           <span class="film-dot dot-four"></span>
           <span class="film-center"></span>
         </span>
+
         <span>Reel<span>Scout</span></span>
       </a>
 
@@ -1004,6 +905,7 @@
     <section id="top" class="hero">
       <div class="hero-content">
         <h1>Movie Streaming Search – Powered by IMDB</h1>
+
         <p>
           Build detailed search request, then let ChatGPT, Gemini, etc.
           investigate IMDB and streaming availability.
@@ -1013,7 +915,9 @@
 
     <div id="builder" class="builder-shell">
       <aside class="filter-panel" aria-label="Search preferences">
-        <div class="step-banner">Step 1- Build Your Search Below</div>
+        <div class="step-banner">
+          Step 1- Build Your Search Below
+        </div>
 
         <fieldset class="filter-group">
           <legend>What do you want to watch?</legend>
@@ -1043,7 +947,8 @@
               data-service="Netflix"
               aria-pressed="true"
             >
-              <span class="service-mark service-netflix">N</span>Netflix
+              <span class="service-mark service-netflix">N</span>
+              Netflix
             </button>
 
             <button
@@ -1062,7 +967,8 @@
               data-service="Max"
               aria-pressed="true"
             >
-              <span class="service-mark service-max">max</span>Max
+              <span class="service-mark service-max">max</span>
+              Max
             </button>
 
             <button
@@ -1070,7 +976,8 @@
               data-service="Disney+"
               aria-pressed="false"
             >
-              <span class="service-mark service-disney">D+</span>Disney+
+              <span class="service-mark service-disney">D+</span>
+              Disney+
             </button>
 
             <button
@@ -1078,11 +985,13 @@
               data-service="Hulu"
               aria-pressed="false"
             >
-              <span class="service-mark service-hulu">h</span>Hulu
+              <span class="service-mark service-hulu">h</span>
+              Hulu
             </button>
 
             <button id="moreButton" type="button" aria-expanded="false">
-              <span class="service-mark">•••</span>More
+              <span class="service-mark">•••</span>
+              More
             </button>
           </div>
 
@@ -1133,11 +1042,7 @@
               Crunchyroll
             </button>
 
-            <button
-              type="button"
-              data-service="BritBox"
-              aria-pressed="false"
-            >
+            <button type="button" data-service="BritBox" aria-pressed="false">
               BritBox
             </button>
 
@@ -1445,9 +1350,17 @@
           `Show titles ${watchText} on ` +
           `${joinNatural([...state.services])}.${specificText}`;
 
-        const additional = `SOURCE AND ELIGIBILITY RESTRICTIONS — IMDb ONLY (MANDATORY):
+        const additional = `SOURCE AND VERIFICATION RESTRICTIONS — IMDb EVIDENCE ONLY:
 
-Use IMDb.com as the only information source. Use IMDb search, title, episode, and Watch options information to discover and verify titles. Do not open, use, rely on, or cite information from Wikipedia, Google search-result snippets, JustWatch, Rotten Tomatoes, streaming-service websites, or any other non-IMDb source.
+You may use a web search tool solely to locate relevant pages on IMDb.com. Search-result listings, snippets, summaries, and information from the search provider are navigation aids only and must not be treated as evidence.
+
+Open the applicable IMDb page for every candidate title. Use only information displayed on IMDb pages to determine whether a title qualifies and to support every fact reported.
+
+Do not use information from Wikipedia, JustWatch, Rotten Tomatoes, streaming-service websites, Google or Bing snippets, or any other non-IMDb page.
+
+A title qualifies only if an opened IMDb page verifies its title, release year, IMDb rating, length or episode count, and current United States Watch options. The IMDb Watch options must display one of the streaming services selected in this request and indicate that the title is included with a subscription without an additional rental or purchase charge.
+
+If an opened IMDb page does not provide enough information to verify every required fact, exclude the title. Do not guess, infer, use a search-result snippet, or consult another website.
 
 Assume streaming availability for viewers in the United States.
 
